@@ -37,11 +37,6 @@ checksum:
 changelog:
   skip: true
 
-release:
-  github:
-    owner: maxpower47
-    name: pronestheus
-
 dockers:
   - dockerfile: Dockerfile
     goos: linux
@@ -52,12 +47,3 @@ dockers:
       - "maxpower47/pronestheus:{{ .Tag }}"
       - "maxpower47/pronestheus:latest"
 
-nfpms:
-  - license: MIT
-    maintainer: grdl
-    homepage: https://github.com/maxpower47/pronestheus
-    bindir: /usr/local/bin
-    description: Prometheus exporter for the Nest Learning Thermostat
-    formats:
-      - deb
-      - rpm
