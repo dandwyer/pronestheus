@@ -92,12 +92,21 @@ nest_ambient_temperature_celsius{id="abcd1234",label="Living-Room"} 23.5
 # HELP nest_heating Is thermostat heating.
 # TYPE nest_heating gauge
 nest_heating{id="abcd1234",label="Living-Room"} 0
+# HELP nest_cooling Is thermostat heating.
+# TYPE nest_cooling gauge
+nest_cooling{id="abcd1234",label="Living-Room"} 1
 # HELP nest_humidity_percent Inside humidity.
 # TYPE nest_humidity_percent gauge
 nest_humidity_percent{id="abcd1234",label="Living-Room"} 55
-# HELP nest_setpoint_temperature_celsius Setpoint temperature.
-# TYPE nest_setpoint_temperature_celsius gauge
-nest_setpoint_temperature_celsius{id="abcd1234",label="Living-Room"} 18
+# HELP nest_heat_setpoint_temperature_celsius Setpoint temperature.
+# TYPE nest_heat_setpoint_temperature_celsius gauge
+nest_heat_setpoint_temperature_celsius{id="abcd1234",label="Living-Room"} 18
+# HELP nest_cool_setpoint_temperature_celsius Setpoint temperature.
+# TYPE nest_cool_setpoint_temperature_celsius gauge
+nest_cool_setpoint_temperature_celsius{id="abcd1234",label="Living-Room"} 21
+# HELP nest_mode Thermostat mode.
+# TYPE nest_mode gauge
+nest_mode{id="abcd1234",label="Living-Room",mode="HEATCOOL"} 1
 # HELP nest_up Was talking to Nest API successful.
 # TYPE nest_up gauge
 nest_up 1
