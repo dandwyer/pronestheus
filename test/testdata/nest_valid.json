@@ -14,7 +14,10 @@
         "sdm.devices.traits.Connectivity": {
           "status": "ONLINE"
         },
-        "sdm.devices.traits.Fan": {},
+        "sdm.devices.traits.Fan": {
+          "timerMode": "ON",
+          "timerTimeout": "2019-05-10T03:22:54Z"
+        },
         "sdm.devices.traits.ThermostatMode": {
           "mode": "HEAT",
           "availableModes": [

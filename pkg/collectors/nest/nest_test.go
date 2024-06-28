@@ -28,6 +28,7 @@ func TestServerResponses(t *testing.T) {
 				Status:           "OFF",
 				Mode:             "HEAT",
 				EcoMode:          "OFF",
+				FanTimerMode:     "ON",
 			},
 		}, {
 			name:    "invalid auth token",
