@@ -11,8 +11,8 @@ jobs:
     strategy:
       matrix:
         # build and publish in parallel: linux/386, linux/amd64, linux/arm64, windows/386, windows/amd64, darwin/amd64, darwin/arm64
-        goos: [linux, windows, darwin]
-        goarch: ["386", amd64, arm64]
+        goos: [linux]
+        goarch: [amd64]
         exclude:
           - goarch: "386"
             goos: darwin
@@ -43,7 +43,7 @@ jobs:
           goversion: "./go.mod"
           project_path: "./cmd/pronestheus"
           binary_name: "pronestheus"
-          extra_files: LICENSE README.md
+          extra_files: README.md
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
