@@ -98,6 +98,9 @@ jobs:
     needs:
       - build
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
