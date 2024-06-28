@@ -49,6 +49,6 @@ jobs:
       - name: Update repo description
         uses: peter-evans/dockerhub-description@v4
         with:
-          username: ${{ vars.DOCKER_USERNAME }}
+          username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: maxpower47/pronestheus
