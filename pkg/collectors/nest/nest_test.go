@@ -20,12 +20,13 @@ func TestServerResponses(t *testing.T) {
 			url:     mock.NestServer().URL,
 			wantErr: nil,
 			want: &Thermostat{
-				ID:           "enterprises/PROJECT_ID/devices/DEVICE_ID",
-				Label:        "Custom Name",
-				AmbientTemp:  float64(20.23999),
+				ID:               "enterprises/PROJECT_ID/devices/DEVICE_ID",
+				Label:            "Custom Name",
+				AmbientTemp:      float64(20.23999),
 				HeatSetpointTemp: float64(19.17838),
-				Humidity:     float64(57),
-				Status:       "OFF",
+				Humidity:         float64(57),
+				Status:           "OFF",
+				Mode:             "HEAT",
 			},
 		}, {
 			name:    "invalid auth token",
