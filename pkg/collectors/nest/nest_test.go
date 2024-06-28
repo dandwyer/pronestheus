@@ -23,7 +23,7 @@ func TestServerResponses(t *testing.T) {
 				ID:           "enterprises/PROJECT_ID/devices/DEVICE_ID",
 				Label:        "Custom Name",
 				AmbientTemp:  float64(20.23999),
-				SetpointTemp: float64(19.17838),
+				HeatSetpointTemp: float64(19.17838),
 				Humidity:     float64(57),
 				Status:       "OFF",
 			},
