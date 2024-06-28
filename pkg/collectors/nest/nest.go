@@ -38,6 +38,7 @@ type Thermostat struct {
 	Humidity         float64
 	Status           string
 	Mode             string
+	EcoMode          string
 }
 
 // Config provides the configuration necessary to create the Collector.
@@ -70,6 +71,7 @@ type Metrics struct {
 	heating          *prometheus.Desc
 	cooling          *prometheus.Desc
 	mode             *prometheus.Desc
+	ecoMode          *prometheus.Desc
 }
 
 // New creates a Collector using the given Config.
@@ -118,6 +120,7 @@ func buildMetrics() *Metrics {
 		heating:          prometheus.NewDesc(strings.Join([]string{"nest", "heating"}, "_"), "Is thermostat heating.", nestLabels, nil),
 		cooling:          prometheus.NewDesc(strings.Join([]string{"nest", "cooling"}, "_"), "Is thermostat cooling.", nestLabels, nil),
 		mode:             prometheus.NewDesc(strings.Join([]string{"nest", "mode"}, "_"), "Thermostat mode.", []string{"id", "label", "mode"}, nil),
+		ecoMode:          prometheus.NewDesc(strings.Join([]string{"nest", "eco", "mode"}, "_"), "Thermostat eco mode.", []string{"id", "label", "mode"}, nil),
 	}
 }
 
@@ -131,6 +134,7 @@ func (c *Collector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- c.metrics.heating
 	ch <- c.metrics.cooling
 	ch <- c.metrics.mode
+	ch <- c.metrics.ecoMode
 }
 
 // Collect implements the prometheus.Collector interface.
@@ -156,6 +160,7 @@ func (c *Collector) Collect(ch chan<- prometheus.Metric) {
 		ch <- prometheus.MustNewConstMetric(c.metrics.heating, prometheus.GaugeValue, b2f(therm.Status == "HEATING"), labels...)
 		ch <- prometheus.MustNewConstMetric(c.metrics.cooling, prometheus.GaugeValue, b2f(therm.Status == "COOLING"), labels...)
 		ch <- prometheus.MustNewConstMetric(c.metrics.mode, prometheus.GaugeValue, 1, append(labels, therm.Mode)...)
+		ch <- prometheus.MustNewConstMetric(c.metrics.ecoMode, prometheus.GaugeValue, 1, append(labels, therm.EcoMode)...)
 	}
 }
 
@@ -192,6 +197,7 @@ func (c *Collector) getNestReadings() (thermostats []*Thermostat, err error) {
 			Humidity:         device.Get("traits.sdm\\.devices\\.traits\\.Humidity.ambientHumidityPercent").Float(),
 			Status:           device.Get("traits.sdm\\.devices\\.traits\\.ThermostatHvac.status").String(),
 			Mode:             device.Get("traits.sdm\\.devices\\.traits\\.ThermostatMode.mode").String(),
+			EcoMode:          device.Get("traits.sdm\\.devices\\.traits\\.ThermostatEco.mode").String(),
 		}
 
 		thermostats = append(thermostats, &thermostat)

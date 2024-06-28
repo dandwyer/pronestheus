@@ -27,6 +27,7 @@ func TestServerResponses(t *testing.T) {
 				Humidity:         float64(57),
 				Status:           "OFF",
 				Mode:             "HEAT",
+				EcoMode:          "OFF",
 			},
 		}, {
 			name:    "invalid auth token",
