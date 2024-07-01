@@ -24,6 +24,7 @@ func TestServerResponses(t *testing.T) {
 				Label:               "Custom Name",
 				AmbientTemp:         float64(20.23999),
 				HeatSetpointTemp:    float64(19.17838),
+				CoolSetpointTemp:    float64(21.49048),
 				Humidity:            float64(57),
 				Status:              "OFF",
 				Mode:                "HEAT",
