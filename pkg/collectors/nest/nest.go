@@ -71,8 +71,7 @@ type Metrics struct {
 	heatSetpointTemp    *prometheus.Desc
 	coolSetpointTemp    *prometheus.Desc
 	humidity            *prometheus.Desc
-	heating             *prometheus.Desc
-	cooling             *prometheus.Desc
+	status              *prometheus.Desc
 	mode                *prometheus.Desc
 	ecoMode             *prometheus.Desc
 	ecoHeatSetpointTemp *prometheus.Desc
@@ -123,8 +122,7 @@ func buildMetrics() *Metrics {
 		heatSetpointTemp:    prometheus.NewDesc(strings.Join([]string{"nest", "heat", "setpoint", "temperature", "celsius"}, "_"), "Heat setpoint temperature.", nestLabels, nil),
 		coolSetpointTemp:    prometheus.NewDesc(strings.Join([]string{"nest", "cool", "setpoint", "temperature", "celsius"}, "_"), "Cool setpoint temperature.", nestLabels, nil),
 		humidity:            prometheus.NewDesc(strings.Join([]string{"nest", "humidity", "percent"}, "_"), "Inside humidity.", nestLabels, nil),
-		heating:             prometheus.NewDesc(strings.Join([]string{"nest", "heating"}, "_"), "Is thermostat heating.", nestLabels, nil),
-		cooling:             prometheus.NewDesc(strings.Join([]string{"nest", "cooling"}, "_"), "Is thermostat cooling.", nestLabels, nil),
+		status:              prometheus.NewDesc(strings.Join([]string{"nest", "status"}, "_"), "Thermostat status.", []string{"id", "label", "mode"}, nil),
 		mode:                prometheus.NewDesc(strings.Join([]string{"nest", "mode"}, "_"), "Thermostat mode.", []string{"id", "label", "mode"}, nil),
 		ecoMode:             prometheus.NewDesc(strings.Join([]string{"nest", "eco", "mode"}, "_"), "Thermostat eco mode.", []string{"id", "label", "mode"}, nil),
 		ecoHeatSetpointTemp: prometheus.NewDesc(strings.Join([]string{"nest", "eco", "heat", "setpoint", "temperature", "celsius"}, "_"), "Eco heat setpoint temperature.", nestLabels, nil),
@@ -140,8 +138,7 @@ func (c *Collector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- c.metrics.heatSetpointTemp
     ch <- c.metrics.coolSetpointTemp
 	ch <- c.metrics.humidity
-	ch <- c.metrics.heating
-	ch <- c.metrics.cooling
+	ch <- c.metrics.status
 	ch <- c.metrics.mode
 	ch <- c.metrics.ecoMode
 	ch <- c.metrics.ecoHeatSetpointTemp
@@ -169,8 +166,7 @@ func (c *Collector) Collect(ch chan<- prometheus.Metric) {
 		ch <- prometheus.MustNewConstMetric(c.metrics.heatSetpointTemp, prometheus.GaugeValue, therm.HeatSetpointTemp, labels...)
 		ch <- prometheus.MustNewConstMetric(c.metrics.coolSetpointTemp, prometheus.GaugeValue, therm.CoolSetpointTemp, labels...)
 		ch <- prometheus.MustNewConstMetric(c.metrics.humidity, prometheus.GaugeValue, therm.Humidity, labels...)
-		ch <- prometheus.MustNewConstMetric(c.metrics.heating, prometheus.GaugeValue, b2f(therm.Status == "HEATING"), labels...)
-		ch <- prometheus.MustNewConstMetric(c.metrics.cooling, prometheus.GaugeValue, b2f(therm.Status == "COOLING"), labels...)
+		ch <- prometheus.MustNewConstMetric(c.metrics.status, prometheus.GaugeValue, 1, append(labels, therm.Status)...)
 		ch <- prometheus.MustNewConstMetric(c.metrics.mode, prometheus.GaugeValue, 1, append(labels, therm.Mode)...)
 		ch <- prometheus.MustNewConstMetric(c.metrics.ecoMode, prometheus.GaugeValue, 1, append(labels, therm.EcoMode)...)
 		ch <- prometheus.MustNewConstMetric(c.metrics.ecoHeatSetpointTemp, prometheus.GaugeValue, therm.EcoHeatSetpointTemp, labels...)

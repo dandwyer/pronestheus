@@ -89,12 +89,9 @@ OpenWeatherMap API key is required to call the weather API. [Look here](https://
 # HELP nest_ambient_temperature_celsius Inside temperature.
 # TYPE nest_ambient_temperature_celsius gauge
 nest_ambient_temperature_celsius{id="abcd1234",label="Living-Room"} 23.5
-# HELP nest_heating Is thermostat heating.
-# TYPE nest_heating gauge
-nest_heating{id="abcd1234",label="Living-Room"} 0
-# HELP nest_cooling Is thermostat heating.
-# TYPE nest_cooling gauge
-nest_cooling{id="abcd1234",label="Living-Room"} 1
+# HELP nest_status thermostat status.
+# TYPE nest_status gauge
+nest_status{id="abcd1234",label="Living-Room",mode="HEATING"} 1
 # HELP nest_humidity_percent Inside humidity.
 # TYPE nest_humidity_percent gauge
 nest_humidity_percent{id="abcd1234",label="Living-Room"} 55
@@ -107,6 +104,18 @@ nest_cool_setpoint_temperature_celsius{id="abcd1234",label="Living-Room"} 21
 # HELP nest_mode Thermostat mode.
 # TYPE nest_mode gauge
 nest_mode{id="abcd1234",label="Living-Room",mode="HEATCOOL"} 1
+# HELP nest_eco_cool_setpoint_temperature_celsius Eco cool setpoint temperature.
+# TYPE nest_eco_cool_setpoint_temperature_celsius gauge
+nest_eco_cool_setpoint_temperature_celsius{id="abcd1234",label="Living-Room"} 24
+# HELP nest_eco_heat_setpoint_temperature_celsius Eco heat setpoint temperature.
+# TYPE nest_eco_heat_setpoint_temperature_celsius gauge
+nest_eco_heat_setpoint_temperature_celsius{id="abcd1234",label="Living-Room"} 18
+# HELP nest_eco_mode Thermostat eco mode.
+# TYPE nest_eco_mode gauge
+nest_eco_mode{id="abcd1234",label="Living-Room",mode="OFF"} 1
+# HELP nest_fan_timer_mode Thermostat fan timer mode.
+# TYPE nest_fan_timer_mode gauge
+nest_fan_timer_mode{id="abcd1234",label="Living-Room",mode="OFF"} 1
 # HELP nest_up Was talking to Nest API successful.
 # TYPE nest_up gauge
 nest_up 1
