@@ -30,16 +30,18 @@ var (
 
 // Thermostat stores thermostat data received from Nest API.
 type Thermostat struct {
-	ID               string
-	Label            string
-	AmbientTemp      float64
-	HeatSetpointTemp float64
-	CoolSetpointTemp float64
-	Humidity         float64
-	Status           string
-	Mode             string
-	EcoMode          string
-	FanTimerMode     string
+	ID                  string
+	Label               string
+	AmbientTemp         float64
+	HeatSetpointTemp    float64
+	CoolSetpointTemp    float64
+	Humidity            float64
+	Status              string
+	Mode                string
+	EcoMode             string
+	EcoHeatSetpointTemp float64
+	EcoCoolSetpointTemp float64
+	FanTimerMode        string
 }
 
 // Config provides the configuration necessary to create the Collector.
@@ -64,16 +66,18 @@ type Collector struct {
 
 // Metrics contains the metrics collected by the Collector.
 type Metrics struct {
-	up               *prometheus.Desc
-	ambientTemp      *prometheus.Desc
-	heatSetpointTemp *prometheus.Desc
-	coolSetpointTemp *prometheus.Desc
-	humidity         *prometheus.Desc
-	heating          *prometheus.Desc
-	cooling          *prometheus.Desc
-	mode             *prometheus.Desc
-	ecoMode          *prometheus.Desc
-	fanTimerMode     *prometheus.Desc
+	up                  *prometheus.Desc
+	ambientTemp         *prometheus.Desc
+	heatSetpointTemp    *prometheus.Desc
+	coolSetpointTemp    *prometheus.Desc
+	humidity            *prometheus.Desc
+	heating             *prometheus.Desc
+	cooling             *prometheus.Desc
+	mode                *prometheus.Desc
+	ecoMode             *prometheus.Desc
+	ecoHeatSetpointTemp *prometheus.Desc
+	ecoCoolSetpointTemp *prometheus.Desc
+	fanTimerMode        *prometheus.Desc
 }
 
 // New creates a Collector using the given Config.
@@ -114,16 +118,18 @@ func New(cfg Config) (*Collector, error) {
 func buildMetrics() *Metrics {
 	var nestLabels = []string{"id", "label"}
 	return &Metrics{
-		up:               prometheus.NewDesc(strings.Join([]string{"nest", "up"}, "_"), "Was talking to Nest API successful.", nil, nil),
-		ambientTemp:      prometheus.NewDesc(strings.Join([]string{"nest", "ambient", "temperature", "celsius"}, "_"), "Inside temperature.", nestLabels, nil),
-		heatSetpointTemp: prometheus.NewDesc(strings.Join([]string{"nest", "heat", "setpoint", "temperature", "celsius"}, "_"), "Heat setpoint temperature.", nestLabels, nil),
-		coolSetpointTemp: prometheus.NewDesc(strings.Join([]string{"nest", "cool", "setpoint", "temperature", "celsius"}, "_"), "Cool setpoint temperature.", nestLabels, nil),
-		humidity:         prometheus.NewDesc(strings.Join([]string{"nest", "humidity", "percent"}, "_"), "Inside humidity.", nestLabels, nil),
-		heating:          prometheus.NewDesc(strings.Join([]string{"nest", "heating"}, "_"), "Is thermostat heating.", nestLabels, nil),
-		cooling:          prometheus.NewDesc(strings.Join([]string{"nest", "cooling"}, "_"), "Is thermostat cooling.", nestLabels, nil),
-		mode:             prometheus.NewDesc(strings.Join([]string{"nest", "mode"}, "_"), "Thermostat mode.", []string{"id", "label", "mode"}, nil),
-		ecoMode:          prometheus.NewDesc(strings.Join([]string{"nest", "eco", "mode"}, "_"), "Thermostat eco mode.", []string{"id", "label", "mode"}, nil),
-		fanTimerMode:     prometheus.NewDesc(strings.Join([]string{"nest", "fan", "timer", "mode"}, "_"), "Thermostat fan timer mode.", []string{"id", "label", "mode"}, nil),
+		up:                  prometheus.NewDesc(strings.Join([]string{"nest", "up"}, "_"), "Was talking to Nest API successful.", nil, nil),
+		ambientTemp:         prometheus.NewDesc(strings.Join([]string{"nest", "ambient", "temperature", "celsius"}, "_"), "Inside temperature.", nestLabels, nil),
+		heatSetpointTemp:    prometheus.NewDesc(strings.Join([]string{"nest", "heat", "setpoint", "temperature", "celsius"}, "_"), "Heat setpoint temperature.", nestLabels, nil),
+		coolSetpointTemp:    prometheus.NewDesc(strings.Join([]string{"nest", "cool", "setpoint", "temperature", "celsius"}, "_"), "Cool setpoint temperature.", nestLabels, nil),
+		humidity:            prometheus.NewDesc(strings.Join([]string{"nest", "humidity", "percent"}, "_"), "Inside humidity.", nestLabels, nil),
+		heating:             prometheus.NewDesc(strings.Join([]string{"nest", "heating"}, "_"), "Is thermostat heating.", nestLabels, nil),
+		cooling:             prometheus.NewDesc(strings.Join([]string{"nest", "cooling"}, "_"), "Is thermostat cooling.", nestLabels, nil),
+		mode:                prometheus.NewDesc(strings.Join([]string{"nest", "mode"}, "_"), "Thermostat mode.", []string{"id", "label", "mode"}, nil),
+		ecoMode:             prometheus.NewDesc(strings.Join([]string{"nest", "eco", "mode"}, "_"), "Thermostat eco mode.", []string{"id", "label", "mode"}, nil),
+		ecoHeatSetpointTemp: prometheus.NewDesc(strings.Join([]string{"nest", "eco", "heat", "setpoint", "temperature", "celsius"}, "_"), "Eco heat setpoint temperature.", nestLabels, nil),
+		ecoCoolSetpointTemp: prometheus.NewDesc(strings.Join([]string{"nest", "eco", "cool", "setpoint", "temperature", "celsius"}, "_"), "Eco cool setpoint temperature.", nestLabels, nil),
+		fanTimerMode:        prometheus.NewDesc(strings.Join([]string{"nest", "fan", "timer", "mode"}, "_"), "Thermostat fan timer mode.", []string{"id", "label", "mode"}, nil),
 	}
 }
 
@@ -138,6 +144,8 @@ func (c *Collector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- c.metrics.cooling
 	ch <- c.metrics.mode
 	ch <- c.metrics.ecoMode
+	ch <- c.metrics.ecoHeatSetpointTemp
+    ch <- c.metrics.ecoCoolSetpointTemp
 	ch <- c.metrics.fanTimerMode
 }
 
@@ -165,6 +173,8 @@ func (c *Collector) Collect(ch chan<- prometheus.Metric) {
 		ch <- prometheus.MustNewConstMetric(c.metrics.cooling, prometheus.GaugeValue, b2f(therm.Status == "COOLING"), labels...)
 		ch <- prometheus.MustNewConstMetric(c.metrics.mode, prometheus.GaugeValue, 1, append(labels, therm.Mode)...)
 		ch <- prometheus.MustNewConstMetric(c.metrics.ecoMode, prometheus.GaugeValue, 1, append(labels, therm.EcoMode)...)
+		ch <- prometheus.MustNewConstMetric(c.metrics.ecoHeatSetpointTemp, prometheus.GaugeValue, therm.EcoHeatSetpointTemp, labels...)
+		ch <- prometheus.MustNewConstMetric(c.metrics.ecoCoolSetpointTemp, prometheus.GaugeValue, therm.EcoCoolSetpointTemp, labels...)
 		ch <- prometheus.MustNewConstMetric(c.metrics.fanTimerMode, prometheus.GaugeValue, 1, append(labels, therm.FanTimerMode)...)
 	}
 }
@@ -194,16 +204,18 @@ func (c *Collector) getNestReadings() (thermostats []*Thermostat, err error) {
 		}
 
 		thermostat := Thermostat{
-			ID:               device.Get("name").String(),
-			Label:            device.Get("traits.sdm\\.devices\\.traits\\.Info.customName").String(),
-			AmbientTemp:      device.Get("traits.sdm\\.devices\\.traits\\.Temperature.ambientTemperatureCelsius").Float(),
-			HeatSetpointTemp: device.Get("traits.sdm\\.devices\\.traits\\.ThermostatTemperatureSetpoint.heatCelsius").Float(),
-			CoolSetpointTemp: device.Get("traits.sdm\\.devices\\.traits\\.ThermostatTemperatureSetpoint.coolCelsius").Float(),
-			Humidity:         device.Get("traits.sdm\\.devices\\.traits\\.Humidity.ambientHumidityPercent").Float(),
-			Status:           device.Get("traits.sdm\\.devices\\.traits\\.ThermostatHvac.status").String(),
-			Mode:             device.Get("traits.sdm\\.devices\\.traits\\.ThermostatMode.mode").String(),
-			EcoMode:          device.Get("traits.sdm\\.devices\\.traits\\.ThermostatEco.mode").String(),
-			FanTimerMode:     device.Get("traits.sdm\\.devices\\.traits\\.Fan.timerMode").String(),
+			ID:                  device.Get("name").String(),
+			Label:               device.Get("traits.sdm\\.devices\\.traits\\.Info.customName").String(),
+			AmbientTemp:         device.Get("traits.sdm\\.devices\\.traits\\.Temperature.ambientTemperatureCelsius").Float(),
+			HeatSetpointTemp:    device.Get("traits.sdm\\.devices\\.traits\\.ThermostatTemperatureSetpoint.heatCelsius").Float(),
+			CoolSetpointTemp:    device.Get("traits.sdm\\.devices\\.traits\\.ThermostatTemperatureSetpoint.coolCelsius").Float(),
+			Humidity:            device.Get("traits.sdm\\.devices\\.traits\\.Humidity.ambientHumidityPercent").Float(),
+			Status:              device.Get("traits.sdm\\.devices\\.traits\\.ThermostatHvac.status").String(),
+			Mode:                device.Get("traits.sdm\\.devices\\.traits\\.ThermostatMode.mode").String(),
+			EcoMode:             device.Get("traits.sdm\\.devices\\.traits\\.ThermostatEco.mode").String(),
+			EcoHeatSetpointTemp: device.Get("traits.sdm\\.devices\\.traits\\.ThermostatEco.heatCelsius").Float(),
+			EcoCoolSetpointTemp: device.Get("traits.sdm\\.devices\\.traits\\.ThermostatEco.coolCelsius").Float(),
+			FanTimerMode:        device.Get("traits.sdm\\.devices\\.traits\\.Fan.timerMode").String(),
 		}
 
 		thermostats = append(thermostats, &thermostat)
