@@ -32,6 +32,11 @@ Update necessary variables in `deployments/docker-compose/.env` file. Then run:
 cd deployments/docker-compose
 docker-compose up
 ```
+or either of the following for Celsius and Fahrenheit support, respectively:
+```
+make deploy
+make deploy_fahrenheit
+```
 
 This will start docker containers with Prometheus, Grafana and ProNestheus exporter automatically configured. Visit http://localhost:3000 to open Grafana dashboard with your thermostat metrics.
 
@@ -48,17 +53,17 @@ Flags:
       --listen-addr=":9777"      Address on which to expose metrics and web interface.
       --metrics-path="/metrics"  Path under which to expose metrics.
       --scrape-timeout=5000      Time to wait for remote APIs to response, in milliseconds.
-      --nest-url="https://smartdevicemanagement.googleapis.com/v1/"  
+      --nest-url="https://smartdevicemanagement.googleapis.com/v1/"
                                  Nest API URL.
-      --nest-client-id=NEST-CLIENT-ID  
+      --nest-client-id=NEST-CLIENT-ID
                                  OAuth2 Client ID
-      --nest-client-secret=NEST-CLIENT-SECRET  
+      --nest-client-secret=NEST-CLIENT-SECRET
                                  OAuth2 Client Secret.
-      --nest-project-id=NEST-PROJECT-ID  
+      --nest-project-id=NEST-PROJECT-ID
                                  Device Access Project ID.
-      --nest-refresh-token=NEST-REFRESH-TOKEN  
+      --nest-refresh-token=NEST-REFRESH-TOKEN
                                  Refresh token
-      --owm-url="http://api.openweathermap.org/data/2.5/weather"  
+      --owm-url="http://api.openweathermap.org/data/2.5/weather"
                                  The OpenWeatherMap API URL.
       --owm-auth=OWM-AUTH        The authorization token for OpenWeatherMap API.
       --owm-location="2759794"   The location ID for OpenWeatherMap API. Defaults to Amsterdam.

@@ -1,0 +1,710 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      },
+      {
+        "enable": true,
+        "filter": {
+          "exclude": false,
+          "ids": [
+            7
+          ]
+        },
+        "hide": true,
+        "iconColor": "background6",
+        "name": "Time region for panel Status",
+        "target": {
+          "queryType": "timeRegions",
+          "refId": "Anno",
+          "timeRegion": {
+            "timezone": "utc"
+          }
+        }
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 4,
+  "links": [],
+  "panels": [
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "fahrenheit"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Inside"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Outside"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed",
+                  "seriesBy": "last"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Eco (Cool)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Setpoint (Cool)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Eco (Heat)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Setpoint (Heat)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "",
+      "targets": [
+        {
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "((nest_eco_heat_setpoint_temperature_celsius) * 1.8) + 32",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "Eco (Heat)",
+          "range": true,
+          "refId": "nest_eco_heat_setpoint_temperature_celsius",
+          "useBackend": false
+        },
+        {
+          "editorMode": "code",
+          "expr": "((nest_heat_setpoint_temperature_celsius > 0) * 1.8) + 32",
+          "interval": "",
+          "legendFormat": "Setpoint (Heat)",
+          "range": true,
+          "refId": "nest_heat_setpoint_temperature_celsius"
+        },
+        {
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "((nest_cool_setpoint_temperature_celsius > 0) * 1.8) + 32",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "Setpoint (Cool)",
+          "range": true,
+          "refId": "nest_cool_setpoint_temperature_celsius",
+          "useBackend": false
+        },
+        {
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "((nest_eco_cool_setpoint_temperature_celsius) * 1.8) + 32",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "Eco (Cool)",
+          "range": true,
+          "refId": "nest_eco_cool_setpoint_temperature_celsius",
+          "useBackend": false
+        },
+        {
+          "editorMode": "code",
+          "expr": "((nest_ambient_temperature_celsius) * 1.8) + 32",
+          "interval": "",
+          "legendFormat": "Inside",
+          "range": true,
+          "refId": "nest_ambient_temperature_celsius"
+        },
+        {
+          "editorMode": "code",
+          "expr": "((nest_weather_temperature_celsius) * 1.8) + 32",
+          "interval": "",
+          "legendFormat": "Outside",
+          "range": true,
+          "refId": "nest_weather_temperature_celsius"
+        },
+        {
+          "editorMode": "code",
+          "expr": "nest_eco_mode{mode!=\"OFF\"}",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "nest_eco_mode_is_on",
+          "range": true,
+          "refId": "nest_eco_mode_is_on"
+        },
+        {
+          "editorMode": "code",
+          "expr": "nest_eco_mode{mode=\"OFF\"}",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "nest_eco_mode_is_off",
+          "range": true,
+          "refId": "nest_eco_mode_is_off"
+        },
+        {
+          "editorMode": "code",
+          "expr": "nest_mode{mode=~\"HEAT\"}",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "nest_mode_is_heat",
+          "range": true,
+          "refId": "nest_mode_is_heat"
+        },
+        {
+          "editorMode": "code",
+          "expr": "nest_mode{mode=~\"COOL\"}",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "nest_mode_is_cool",
+          "range": true,
+          "refId": "nest_mode_is_cool"
+        },
+        {
+          "expression": "($nest_eco_mode_is_on*$nest_eco_cool_setpoint_temperature_celsius) + ($nest_eco_mode_is_off*$nest_cool_setpoint_temperature_celsius)",
+          "hide": true,
+          "refId": "setpoint_cool",
+          "type": "math"
+        }
+      ],
+      "title": "Temperature",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Inside Humidity"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Outside Humidity"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Outside Pressure"
+            },
+            "properties": [
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "unit",
+                "value": "pressurehpa"
+              },
+              {
+                "id": "min",
+                "value": 1000
+              },
+              {
+                "id": "max",
+                "value": 1030
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "continuous-GrYlRd",
+                  "seriesBy": "last"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "",
+      "targets": [
+        {
+          "expr": "nest_humidity_percent",
+          "interval": "",
+          "legendFormat": "Inside Humidity",
+          "refId": "A"
+        },
+        {
+          "expr": "nest_weather_humidity_percent",
+          "interval": "",
+          "legendFormat": "Outside Humidity",
+          "refId": "B"
+        },
+        {
+          "expr": "nest_weather_pressure_hectopascal",
+          "interval": "",
+          "legendFormat": "Outside Pressure",
+          "refId": "C"
+        }
+      ],
+      "title": "Humidity and Pressure",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [],
+          "max": 107.60000000000001,
+          "min": 32,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue"
+              },
+              {
+                "color": "green",
+                "value": 64.4
+              },
+              {
+                "color": "red",
+                "value": 75.2
+              }
+            ]
+          },
+          "unit": "fahrenheit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 21
+      },
+      "id": 5,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "((nest_ambient_temperature_celsius) * 1.8) + 32",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Current Temperature",
+      "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisPlacement": "auto",
+            "fillOpacity": 70,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "index": 1,
+                  "text": "OFF"
+                },
+                "1": {
+                  "color": "yellow",
+                  "index": 2,
+                  "text": "ON"
+                },
+                "2": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "HEAT"
+                },
+                "3": {
+                  "color": "purple",
+                  "index": 4,
+                  "text": "HEATCOOL"
+                },
+                "-1": {
+                  "color": "blue",
+                  "index": 0,
+                  "text": "COOL"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 18,
+        "x": 6,
+        "y": 21
+      },
+      "id": 8,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mergeValues": false,
+        "rowHeight": 0.9,
+        "showValue": "auto",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "(sum without(mode) (nest_status{mode=\"COOLING\"}*-1)) or (sum without(mode) (nest_status{mode=\"OFF\"}*0)) or (sum without(mode) (nest_status{mode=\"HEATING\"}*2))",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Status: {{mode}}",
+          "range": true,
+          "refId": "nest_status"
+        },
+        {
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(sum without(mode) (nest_mode{mode=\"COOL\"}*-1)) or (sum without(mode) (nest_mode{mode=\"OFF\"}*0)) or (sum without(mode) (nest_mode{mode=\"HEAT\"}*2)) or (sum without(mode) (nest_mode{mode=\"HEATCOOL\"}*3))",
+          "format": "time_series",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "Mode",
+          "range": true,
+          "refId": "nest_mode",
+          "useBackend": false
+        },
+        {
+          "editorMode": "code",
+          "expr": "(sum without(mode) (nest_eco_mode{mode=\"OFF\"}*0)) or (sum without(mode) (nest_eco_mode{mode!=\"OFF\"}*1))",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Eco Mode",
+          "range": true,
+          "refId": "nest_eco_mode"
+        },
+        {
+          "editorMode": "code",
+          "expr": "(sum without(mode) (nest_fan_timer_mode{mode=\"OFF\"}*0)) or (sum without(mode) (nest_fan_timer_mode{mode!=\"OFF\"}*1))",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Fan",
+          "range": true,
+          "refId": "nest_fan_timer_mode"
+        }
+      ],
+      "title": "Status",
+      "type": "state-timeline"
+    }
+  ],
+  "preload": false,
+  "refresh": "10s",
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Nest Thermostat (F)",
+  "version": 1
+}

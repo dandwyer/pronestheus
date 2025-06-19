@@ -17,10 +17,10 @@ services:
     volumes:
       - ./files/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
       - ./files/grafana-providers.yml:/etc/grafana/provisioning/dashboards/providers.yml
-      - ./files/grafana-dashboard.json:/var/lib/grafana/dashboards/pronestheus.json
+      - ./files/dashboards/:/var/lib/grafana/dashboards/
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/pronestheus.json
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/nest-thermostat.json
 
   pronestheus:  
     image: maxpower47/pronestheus:latest

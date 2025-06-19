@@ -182,7 +182,7 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 12,
         "w": 24,
         "x": 0,
         "y": 0
@@ -439,10 +439,10 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 12
       },
       "id": 3,
       "options": {
@@ -489,8 +489,8 @@
         "defaults": {
           "decimals": 1,
           "mappings": [],
-          "max": 40,
-          "min": 5,
+          "max": 42,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -499,11 +499,11 @@
               },
               {
                 "color": "green",
-                "value": 20
+                "value": 18
               },
               {
                 "color": "red",
-                "value": 25
+                "value": 24
               }
             ]
           },
@@ -515,7 +515,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 16
+        "y": 21
       },
       "id": 5,
       "options": {
@@ -612,7 +612,7 @@
         "h": 8,
         "w": 18,
         "x": 6,
-        "y": 16
+        "y": 21
       },
       "id": 8,
       "options": {
