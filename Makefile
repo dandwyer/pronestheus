@@ -11,13 +11,13 @@ all: build test
 build:
 	go build -C cmd/pronestheus -o $(shell pwd)/pronestheus
 
-build_docker: build
+build_docker: build test
 	docker build -t maxpower47/pronestheus:latest .
 
-deploy:	undeploy clean build_docker sanitize_dashboard convert_dashboard
+deploy:	undeploy clean build_docker sanitize_dashboard convert_dashboard test_auth
 	docker compose -f deployments/docker-compose/docker-compose.yml up -d
 
-deploy_fahrenheit: undeploy clean build_docker sanitize_dashboard convert_dashboard
+deploy_fahrenheit: undeploy clean build_docker sanitize_dashboard convert_dashboard test_auth
 	docker compose \
 		-f deployments/docker-compose/docker-compose.yml \
 		-f deployments/docker-compose/docker-compose-fahrenheit.yml \
