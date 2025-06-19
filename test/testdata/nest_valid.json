@@ -22,6 +22,8 @@
           "mode": "HEAT",
           "availableModes": [
             "HEAT",
+            "COOL",
+            "HEATCOOL",
             "OFF"
           ]
         },

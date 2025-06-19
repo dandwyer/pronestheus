@@ -33,7 +33,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 4,
   "links": [],
   "panels": [
     {
@@ -51,7 +51,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 20,
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -66,7 +66,7 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": true,
+            "spanNulls": false,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -77,17 +77,11 @@
           },
           "decimals": 1,
           "mappings": [],
-          "max": 40,
-          "min": 0,
           "thresholds": {
-            "mode": "absolute",
+            "mode": "percentage",
             "steps": [
               {
                 "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -103,7 +97,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "light-red",
+                  "fixedColor": "green",
                   "mode": "fixed"
                 }
               }
@@ -118,7 +112,23 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-green",
+                  "fixedColor": "yellow",
+                  "mode": "fixed",
+                  "seriesBy": "last"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Eco (Cool)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
                   "mode": "fixed"
                 }
               }
@@ -127,12 +137,45 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Target"
+              "options": "Setpoint (Cool)"
             },
             "properties": [
               {
-                "id": "custom.fillOpacity",
-                "value": 0
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Eco (Heat)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Setpoint (Heat)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
               }
             ]
           }
@@ -147,7 +190,9 @@
       "id": 2,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -161,22 +206,109 @@
       "pluginVersion": "",
       "targets": [
         {
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "nest_eco_heat_setpoint_temperature_celsius",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "Eco (Heat)",
+          "range": true,
+          "refId": "nest_eco_heat_setpoint_temperature_celsius",
+          "useBackend": false
+        },
+        {
+          "editorMode": "code",
+          "expr": "nest_heat_setpoint_temperature_celsius > 0",
+          "interval": "",
+          "legendFormat": "Setpoint (Heat)",
+          "range": true,
+          "refId": "nest_heat_setpoint_temperature_celsius"
+        },
+        {
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "nest_cool_setpoint_temperature_celsius > 0",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "Setpoint (Cool)",
+          "range": true,
+          "refId": "nest_cool_setpoint_temperature_celsius",
+          "useBackend": false
+        },
+        {
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "nest_eco_cool_setpoint_temperature_celsius",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "Eco (Cool)",
+          "range": true,
+          "refId": "nest_eco_cool_setpoint_temperature_celsius",
+          "useBackend": false
+        },
+        {
+          "editorMode": "code",
           "expr": "nest_ambient_temperature_celsius",
           "interval": "",
           "legendFormat": "Inside",
-          "refId": "A"
+          "range": true,
+          "refId": "nest_ambient_temperature_celsius"
         },
         {
+          "editorMode": "code",
           "expr": "nest_weather_temperature_celsius",
           "interval": "",
           "legendFormat": "Outside",
-          "refId": "B"
+          "range": true,
+          "refId": "nest_weather_temperature_celsius"
         },
         {
-          "expr": "nest_setpoint_temperature_celsius",
-          "interval": "",
-          "legendFormat": "Target",
-          "refId": "C"
+          "editorMode": "code",
+          "expr": "nest_eco_mode{mode!=\"OFF\"}",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "nest_eco_mode_is_on",
+          "range": true,
+          "refId": "nest_eco_mode_is_on"
+        },
+        {
+          "editorMode": "code",
+          "expr": "nest_eco_mode{mode=\"OFF\"}",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "nest_eco_mode_is_off",
+          "range": true,
+          "refId": "nest_eco_mode_is_off"
+        },
+        {
+          "editorMode": "code",
+          "expr": "nest_mode{mode=~\"HEAT\"}",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "nest_mode_is_heat",
+          "range": true,
+          "refId": "nest_mode_is_heat"
+        },
+        {
+          "editorMode": "code",
+          "expr": "nest_mode{mode=~\"COOL\"}",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "nest_mode_is_cool",
+          "range": true,
+          "refId": "nest_mode_is_cool"
+        },
+        {
+          "expression": "($nest_eco_mode_is_on*$nest_eco_cool_setpoint_temperature_celsius) + ($nest_eco_mode_is_off*$nest_cool_setpoint_temperature_celsius)",
+          "hide": true,
+          "refId": "setpoint_cool",
+          "type": "math"
         }
       ],
       "title": "Temperature",
@@ -197,7 +329,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 20,
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -223,10 +355,8 @@
           },
           "decimals": 0,
           "mappings": [],
-          "max": 100,
-          "min": 0,
           "thresholds": {
-            "mode": "absolute",
+            "mode": "percentage",
             "steps": [
               {
                 "color": "green"
@@ -243,43 +373,13 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Inside"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "light-red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Inside Humidity"
             },
             "properties": [
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "light-red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Outside"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-green",
+                  "fixedColor": "green",
                   "mode": "fixed"
                 }
               }
@@ -294,37 +394,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Outside Pressure"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Pressure"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
+                  "fixedColor": "blue",
                   "mode": "fixed"
                 }
               }
@@ -355,6 +425,14 @@
               {
                 "id": "custom.axisPlacement",
                 "value": "right"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "continuous-GrYlRd",
+                  "seriesBy": "last"
+                }
               }
             ]
           }
@@ -369,7 +447,9 @@
       "id": 3,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -418,7 +498,7 @@
                 "color": "blue"
               },
               {
-                "color": "yellow",
+                "color": "green",
                 "value": 20
               },
               {
@@ -456,6 +536,7 @@
       "pluginVersion": "",
       "targets": [
         {
+          "editorMode": "code",
           "expr": "nest_ambient_temperature_celsius",
           "hide": false,
           "instant": true,
@@ -471,121 +552,61 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "hidden",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 80,
-            "gradientMode": "opacity",
+            "axisPlacement": "auto",
+            "fillOpacity": 70,
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
             "insertNulls": false,
-            "lineInterpolation": "stepAfter",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "lineWidth": 0,
+            "spanNulls": false
           },
-          "decimals": 0,
-          "mappings": [],
-          "max": 1.5,
-          "min": 0,
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "index": 1,
+                  "text": "OFF"
+                },
+                "1": {
+                  "color": "yellow",
+                  "index": 2,
+                  "text": "ON"
+                },
+                "2": {
+                  "color": "red",
+                  "index": 3,
+                  "text": "HEAT"
+                },
+                "3": {
+                  "color": "purple",
+                  "index": 4,
+                  "text": "HEATCOOL"
+                },
+                "-1": {
+                  "color": "blue",
+                  "index": 0,
+                  "text": "COOL"
+                }
+              },
+              "type": "value"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Heating On"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Heating on"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Saving On"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Saving on"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
               }
             ]
           }
-        ]
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -593,35 +614,74 @@
         "x": 6,
         "y": 16
       },
-      "id": 7,
+      "id": 8,
       "options": {
+        "alignValue": "left",
         "legend": {
-          "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
         },
+        "mergeValues": false,
+        "rowHeight": 0.9,
+        "showValue": "auto",
         "tooltip": {
           "hideZeros": false,
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
       "pluginVersion": "",
       "targets": [
         {
-          "expr": "nest_heating",
-          "interval": "",
-          "legendFormat": "Heating On",
-          "refId": "A"
+          "editorMode": "code",
+          "expr": "(sum without(mode) (nest_status{mode=\"COOLING\"}*-1)) or (sum without(mode) (nest_status{mode=\"OFF\"}*0)) or (sum without(mode) (nest_status{mode=\"HEATING\"}*2))",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Status: {{mode}}",
+          "range": true,
+          "refId": "nest_status"
+        },
+        {
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(sum without(mode) (nest_mode{mode=\"COOL\"}*-1)) or (sum without(mode) (nest_mode{mode=\"OFF\"}*0)) or (sum without(mode) (nest_mode{mode=\"HEAT\"}*2)) or (sum without(mode) (nest_mode{mode=\"HEATCOOL\"}*3))",
+          "format": "time_series",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "Mode",
+          "range": true,
+          "refId": "nest_mode",
+          "useBackend": false
+        },
+        {
+          "editorMode": "code",
+          "expr": "(sum without(mode) (nest_eco_mode{mode=\"OFF\"}*0)) or (sum without(mode) (nest_eco_mode{mode!=\"OFF\"}*1))",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Eco Mode",
+          "range": true,
+          "refId": "nest_eco_mode"
+        },
+        {
+          "editorMode": "code",
+          "expr": "(sum without(mode) (nest_fan_timer_mode{mode=\"OFF\"}*0)) or (sum without(mode) (nest_fan_timer_mode{mode!=\"OFF\"}*1))",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Fan",
+          "range": true,
+          "refId": "nest_fan_timer_mode"
         }
       ],
       "title": "Status",
-      "type": "timeseries"
+      "type": "state-timeline"
     }
   ],
   "preload": false,
-  "refresh": "",
+  "refresh": "10s",
   "schemaVersion": 41,
   "tags": [],
   "templating": {
