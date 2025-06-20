@@ -6,7 +6,7 @@ on:
       - '*'
 
 env:
-  REGISTRY_IMAGE: maxpower47/pronestheus
+  REGISTRY_IMAGE: dandw/pronestheus
 
 jobs:
   build:
