@@ -1,15 +1,18 @@
 # https://www.gnu.org/software/make/manual/make.html
 
-.PHONY: all build build_docker deploy deploy_fahrenheit undeploy \
-	format log test test_auth \
+.PHONY: all analyze build build_docker deploy deploy_fahrenheit undeploy \
+	format lint log test test_auth \
 	sanitize_dashboard \
 	deployments/docker-compose/files/dashboards/nest-thermostat-fahrenheit.json \
 	convert_dashboard clean
 
 all: build test
 
+analyze:
+	cd cmd/pronestheus; goweight .
+
 build:
-	go build -C cmd/pronestheus -o $(shell pwd)/pronestheus
+	CGO_ENABLED=0 GOOS=linux go build -C cmd/pronestheus -ldflags="-s -w" -trimpath -o $(shell pwd)/pronestheus
 
 build_docker: build test
 	docker build -t dandw/pronestheus:latest .
@@ -35,6 +38,10 @@ upgrade_go_dependencies:
 format:
 	find . -iname \*.go -exec gofmt -s -w {} \;
 	go mod tidy
+
+lint:
+	go install honnef.co/go/tools/cmd/staticcheck@latest
+	staticcheck ./...
 
 log:
 	docker logs docker-compose-pronestheus-1 -f

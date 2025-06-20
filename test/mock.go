@@ -2,9 +2,9 @@ package test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
 	"runtime"
 	"time"
@@ -88,7 +88,7 @@ func readFile(filename string) string {
 	_, b, _, _ := runtime.Caller(0)
 	basepath := filepath.Dir(b)
 
-	bytes, err := ioutil.ReadFile(filepath.Join(basepath, "testdata", filename))
+	bytes, err := os.ReadFile(filepath.Join(basepath, "testdata", filename))
 	if err != nil {
 		panic(err)
 	}

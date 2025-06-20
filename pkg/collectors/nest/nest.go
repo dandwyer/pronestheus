@@ -3,7 +3,7 @@ package nest
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -187,7 +187,7 @@ func (c *Collector) getNestReadings() (thermostats []*Thermostat, err error) {
 
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, errors.Wrap(errFailedReadingBody, err.Error())
 	}
@@ -223,11 +223,4 @@ func (c *Collector) getNestReadings() (thermostats []*Thermostat, err error) {
 	}
 
 	return thermostats, nil
-}
-
-func b2f(b bool) float64 {
-	if b {
-		return 1
-	}
-	return 0
 }
