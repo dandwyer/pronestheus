@@ -4,7 +4,7 @@ import (
 	mock "pronestheus/test"
 	"testing"
 
-	"github.com/alecthomas/assert"
+	"github.com/alecthomas/assert/v2"
 	"github.com/pkg/errors"
 )
 
@@ -62,11 +62,11 @@ func TestServerResponses(t *testing.T) {
 			thermostats, err := c.getNestReadings()
 
 			if test.wantErr != nil {
-				assert.Nil(t, thermostats)
+				assert.Equal(t, nil, thermostats)
 				assert.True(t, errors.Is(err, test.wantErr))
 			} else {
 				assert.NoError(t, err)
-				assert.Len(t, thermostats, 1)
+				assert.Equal(t, len(thermostats), 1)
 				assert.Equal(t, thermostats[0], test.want)
 			}
 		})
@@ -100,10 +100,10 @@ func TestAPIURLParsing(t *testing.T) {
 			})
 
 			if test.wantErr != nil {
-				assert.Nil(t, c)
+				assert.Equal(t, nil, c)
 				assert.True(t, errors.Is(err, test.wantErr))
 			} else {
-				assert.NotNil(t, c)
+				assert.NotEqual(t, nil, c)
 				assert.NoError(t, err)
 			}
 		})

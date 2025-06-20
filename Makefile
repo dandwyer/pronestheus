@@ -29,9 +29,11 @@ undeploy:
 upgrade_go_dependencies:
 	go get -u ./...
 	go get -u=patch ./...
+	go get -u all
+	go mod tidy
 
 format:
-	find . -iname \*.go -exec gofmt -w {} \;
+	find . -iname \*.go -exec gofmt -s -w {} \;
 	go mod tidy
 
 log:
