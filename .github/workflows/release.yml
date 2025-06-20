@@ -5,6 +5,9 @@ on:
     tags:
       - '*'
 
+permissions:
+  contents: read
+
 env:
   REGISTRY_IMAGE: dandw/pronestheus
 

@@ -1,7 +1,7 @@
 # ProNestheus
 
-![build](https://github.com/dandw/pronestheus/workflows/build/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/dandw/pronestheus)](https://goreportcard.com/report/github.com/dandw/pronestheus)
+![build](https://github.com/dandwyer/pronestheus/workflows/build/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/dandwyer/pronestheus)](https://goreportcard.com/report/github.com/dandwyer/pronestheus)
 
 A Prometheus exporter for the [Nest Learning Thermostat](https://nest.com/). Exposes metrics about your thermostats and the weather in your current location.
 
@@ -13,7 +13,7 @@ Works with the new [Google Smart Device Management API](https://developers.googl
 
 ### Binary download
 
-Grab the Linux, macOS or Windows executable from the [latest release](https://github.com/dandw/pronestheus/releases/latest).
+Grab the Linux, macOS or Windows executable from the [latest release](https://github.com/dandwyer/pronestheus/releases/latest).
 
 ### Docker image
 
