@@ -25,7 +25,7 @@ jobs:
       - name: Prepare
         run: |
           platform=${{ matrix.goos }}/${{ matrix.goarch }}
-          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV   
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.14
+          go-version: 1.24.4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -83,8 +83,8 @@ jobs:
         run: |
           mkdir -p /tmp/digests
           digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"          
-        
+          touch "/tmp/digests/${digest#sha256:}"
+
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
@@ -107,28 +107,28 @@ jobs:
           path: /tmp/digests
           pattern: digests-*
           merge-multiple: true
-              
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-              
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY_IMAGE }}
-              
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-              
+
       - name: Create manifest list and push
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)          
-              
+            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+
       - name: Update repo description
         uses: peter-evans/dockerhub-description@v4
         with:
@@ -138,4 +138,4 @@ jobs:
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}      
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}

@@ -1,7 +1,7 @@
 # https://www.gnu.org/software/make/manual/make.html
 
 .PHONY: all build build_docker deploy deploy_fahrenheit undeploy \
-	log test test_auth \
+	format log test test_auth \
 	sanitize_dashboard \
 	deployments/docker-compose/files/dashboards/nest-thermostat-fahrenheit.json \
 	convert_dashboard clean
@@ -25,6 +25,14 @@ deploy_fahrenheit: undeploy clean build_docker sanitize_dashboard convert_dashbo
 
 undeploy:
 	docker compose -f deployments/docker-compose/docker-compose.yml down
+
+upgrade_go_dependencies:
+	go get -u ./...
+	go get -u=patch ./...
+
+format:
+	find . -iname \*.go -exec gofmt -w {} \;
+	go mod tidy
 
 log:
 	docker logs docker-compose-pronestheus-1 -f
@@ -74,4 +82,4 @@ deployments/docker-compose/files/dashboards/nest-thermostat-fahrenheit.json: \
 	jq '.title = "Nest Thermostat (F)"' $@ | sponge $@
 
 clean:
-	rm $(shell pwd)/pronestheus
+	- rm $(shell pwd)/pronestheus

@@ -136,13 +136,13 @@ func (c *Collector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- c.metrics.up
 	ch <- c.metrics.ambientTemp
 	ch <- c.metrics.heatSetpointTemp
-    ch <- c.metrics.coolSetpointTemp
+	ch <- c.metrics.coolSetpointTemp
 	ch <- c.metrics.humidity
 	ch <- c.metrics.status
 	ch <- c.metrics.mode
 	ch <- c.metrics.ecoMode
 	ch <- c.metrics.ecoHeatSetpointTemp
-    ch <- c.metrics.ecoCoolSetpointTemp
+	ch <- c.metrics.ecoCoolSetpointTemp
 	ch <- c.metrics.fanTimerMode
 }
 

@@ -84,7 +84,6 @@ func NestServerInvalidResponse() *httptest.Server {
 // Ref:
 // - https://dave.cheney.net/2016/05/10/test-fixtures-in-go
 // - https://stackoverflow.com/a/38644571/1085632
-//
 func readFile(filename string) string {
 	_, b, _, _ := runtime.Caller(0)
 	basepath := filepath.Dir(b)
