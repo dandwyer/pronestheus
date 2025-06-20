@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
-	"pronestheus/pkg"
 
 	"github.com/alecthomas/kingpin/v2"
+	"github.com/dandwyer/pronestheus/pkg"
 )
 
 // Version metadata set by ldflags during the build.

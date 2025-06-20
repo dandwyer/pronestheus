@@ -1,9 +1,11 @@
-module pronestheus
+module github.com/dandwyer/pronestheus
+
+go 1.24.4
 
 require (
 	github.com/alecthomas/assert/v2 v2.11.0
 	github.com/alecthomas/kingpin/v2 v2.4.0
-	github.com/go-kit/kit v0.13.0
+	github.com/go-kit/log v0.2.1
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.22.0
 	github.com/stretchr/testify v1.10.0
@@ -17,7 +19,6 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/hexops/gotextdiff v1.0.3 // indirect
 	github.com/kr/text v0.2.0 // indirect
@@ -33,5 +34,3 @@ require (
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-go 1.24.4

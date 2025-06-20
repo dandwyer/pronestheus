@@ -3,8 +3,9 @@ package pkg
 import (
 	"net/http"
 	"net/http/httptest"
-	"pronestheus/test"
 	"testing"
+
+	"github.com/dandwyer/pronestheus/test"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"

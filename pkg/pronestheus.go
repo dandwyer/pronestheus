@@ -6,11 +6,11 @@ import (
 
 	"golang.org/x/oauth2"
 
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	"pronestheus/pkg/collectors/nest"
-	"pronestheus/pkg/collectors/weather"
+	"github.com/dandwyer/pronestheus/pkg/collectors/nest"
+	"github.com/dandwyer/pronestheus/pkg/collectors/weather"
 
 	"github.com/prometheus/client_golang/prometheus"
 )

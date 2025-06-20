@@ -1,8 +1,9 @@
 package nest
 
 import (
-	mock "pronestheus/test"
 	"testing"
+
+	mock "github.com/dandwyer/pronestheus/test"
 
 	"github.com/alecthomas/assert/v2"
 	"github.com/pkg/errors"

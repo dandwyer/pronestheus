@@ -2,8 +2,9 @@ package weather
 
 import (
 	"errors"
-	"pronestheus/test"
 	"testing"
+
+	"github.com/dandwyer/pronestheus/test"
 
 	"github.com/stretchr/testify/assert"
 )
