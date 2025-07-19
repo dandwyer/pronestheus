@@ -1,7 +1,7 @@
 services:
   prometheus:
     # https://hub.docker.com/r/prom/prometheus/tags
-    image: prom/prometheus:v3.4.1
+    image: prom/prometheus:v3.5.0
     ports:
       - "9090:9090"
     volumes:
@@ -10,21 +10,23 @@ services:
 
   grafana:
     # https://hub.docker.com/r/grafana/grafana/tags
-    image: grafana/grafana:12.0.2
+    image: grafana/grafana:12.0.2-security-01
     ports:
       - "3000:3000"
     volumes:
       - ./files/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
       - ./files/grafana-providers.yml:/etc/grafana/provisioning/dashboards/providers.yml
-      - ./files/dashboards/:/var/lib/grafana/dashboards/
+      - ./files/dashboards/nest-thermostat.json:/var/lib/grafana/dashboards/pronestheus/nest-thermostat.json
+      - ./files/dashboards/nest-thermostat-fahrenheit.json:/var/lib/grafana/dashboards/pronestheus/nest-thermostat-fahrenheit.json
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       # - GF_AUTH_ANONYMOUS_HIDE_VERSION=true
       # - GF_AUTH_ANONYMOUS_ORG_NAME=Main Org.
       # - GF_AUTH_ANONYMOUS_ORG_ROLE=Editor
-      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/nest-thermostat.json
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/pronestheus/nest-thermostat.json
 
   pronestheus:
+    # https://hub.docker.com/r/dandw/pronestheus/tags
     image: dandw/pronestheus:latest
     ports:
       - "9777:9777"
