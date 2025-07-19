@@ -1,10 +1,24 @@
 # https://www.gnu.org/software/make/manual/make.html
 
-.PHONY: all analyze build build_docker deploy deploy_fahrenheit undeploy \
-	format lint log test test_auth \
-	sanitize_dashboard \
+.PHONY: \
+	all \
+	analyze \
+	build \
+	build_docker \
+	clean \
+	convert_dashboard_from_c_to_f \
+	convert_dashboard_from_f_to_c \
+	deploy \
+	deploy_fahrenheit \
 	deployments/docker-compose/files/dashboards/nest-thermostat-fahrenheit.json \
-	convert_dashboard clean
+	deployments/docker-compose/files/dashboards/nest-thermostat.json \
+	format \
+	lint \
+	log \
+	sanitize_dashboard \
+	test \
+	test_auth \
+	undeploy \
 
 all: build test
 
@@ -17,10 +31,10 @@ build:
 build_docker: build test
 	docker build -t dandw/pronestheus:latest .
 
-deploy:	undeploy clean build_docker sanitize_dashboard convert_dashboard test_auth
+deploy:	undeploy clean build_docker sanitize_dashboard convert_dashboard_from_c_to_f test_auth
 	docker compose -f deployments/docker-compose/docker-compose.yml up -d
 
-deploy_fahrenheit: undeploy clean build_docker sanitize_dashboard convert_dashboard test_auth
+deploy_fahrenheit: undeploy clean build_docker sanitize_dashboard convert_dashboard_from_c_to_f test_auth
 	docker compose \
 		-f deployments/docker-compose/docker-compose.yml \
 		-f deployments/docker-compose/docker-compose-fahrenheit.yml \
@@ -61,27 +75,27 @@ test_auth:
 # If you export dashboard JSON from Grafana, you need to sanitize it to get rid
 # of uid and datasource fields that are not needed in the provisioning artifact.
 sanitize_dashboard: deployments/docker-compose/files/dashboards/nest-thermostat.json
-	jq '.time.from = "now-1h"' $< | sponge $<
+	jq '.time.from = "now-7d"' $< | sponge $<
 	jq '.time.to = "now"' $< | sponge $<
 	jq '.title = "Nest Thermostat"' $< | sponge $<
 	jq '.version = 1' $< | sponge $<
 	jq 'del(.. | objects | .datasource?)' $< | sponge $<
-	jq 'del(.. | objects | .uid?)' $< | sponge $<
 
-convert_dashboard : deployments/docker-compose/files/dashboards/nest-thermostat-fahrenheit.json
+convert_dashboard_from_c_to_f : deployments/docker-compose/files/dashboards/nest-thermostat-fahrenheit.json
 
-deployments/docker-compose/files/dashboards/nest-thermostat-fahrenheit.json: \
-	deployments/docker-compose/files/dashboards/nest-thermostat.json
+convert_dashboard_from_f_to_c: deployments/docker-compose/files/dashboards/nest-thermostat.json
+
+deployments/docker-compose/files/dashboards/nest-thermostat-fahrenheit.json: sanitize_dashboard
 	jq "walk(if type == \"object\" and has(\"expr\") and (.expr | test(\"^[a-z_]+_celsius\")) \
 		then .expr |= sub(\"(?<x>[a-z_]+_celsius.*)\"; \"((\\(.x)) * 1.8) + 32\") \
-		else . end)" $< | sponge $@
+		else . end)" deployments/docker-compose/files/dashboards/nest-thermostat.json | sponge $@
 	jq "walk(if type == \"object\" and has(\"unit\") and (.unit | test(\"^celsius\")) \
 		then .unit |= sub(\"celsius\"; \"fahrenheit\") \
 		else . end)" $@ | sponge $@
 	jq "walk(if type == \"object\" and (.unit == \"fahrenheit\") and has(\"min\") and has(\"max\") \
 		then \
-			.min = ((.min * 1.8) + 32) | \
-			.max = ((.max * 1.8) + 32) | \
+			.min = (((((.min * 1.8) + 32) * 10) | round) / 10) | \
+			.max = (((((.max * 1.8) + 32) * 10) | round) / 10) | \
 			.thresholds.steps = ( \
 				.thresholds.steps | map( \
 					if has(\"value\") then .value = ((.value * 1.8) + 32) else . end \
@@ -89,6 +103,27 @@ deployments/docker-compose/files/dashboards/nest-thermostat-fahrenheit.json: \
 			) \
 		else . end)" $@ | sponge $@
 	jq '.title = "Nest Thermostat (F)"' $@ | sponge $@
+	jq '.uid |= sub("(?<x>.*)-c"; "\(.x)-f")' $@ | sponge $@
+
+deployments/docker-compose/files/dashboards/nest-thermostat.json:
+	jq "walk(if type == \"object\" and has(\"expr\") and (.expr | test(\"[a-z_]+_celsius\")) \
+		then .expr |= sub(\"\\\\(\\\\((?<x>[a-z_]+_celsius( > 0)?).*\"; \"\\(.x)\") \
+		else . end)" deployments/docker-compose/files/dashboards/nest-thermostat-fahrenheit.json | sponge $@
+	jq "walk(if type == \"object\" and has(\"unit\") and (.unit | test(\"^fahrenheit\")) \
+		then .unit |= sub(\"fahrenheit\"; \"celsius\") \
+		else . end)" $@ | sponge $@
+	jq "walk(if type == \"object\" and (.unit == \"celsius\") and has(\"min\") and has(\"max\") \
+		then \
+			.min = (((.min - 32) / 1.8) | round) | \
+			.max = (((.max - 32) / 1.8) | round) | \
+			.thresholds.steps = ( \
+				.thresholds.steps | map( \
+					if has(\"value\") then .value = (((.value - 32) / 1.8) | round) else . end \
+				) \
+			) \
+		else . end)" $@ | sponge $@
+	jq '.title = "Nest Thermostat"' $@ | sponge $@
+	jq '.uid |= sub("(?<x>.*)-f"; "\(.x)-c")' $@ | sponge $@
 
 clean:
 	- rm $(shell pwd)/pronestheus
