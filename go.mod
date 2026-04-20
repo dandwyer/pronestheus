@@ -1,6 +1,6 @@
 module github.com/dandwyer/pronestheus
 
-go 1.24.4
+go 1.25.0
 
 require (
 	github.com/alecthomas/assert/v2 v2.11.0
@@ -10,7 +10,7 @@ require (
 	github.com/prometheus/client_golang v1.23.2
 	github.com/stretchr/testify v1.11.1
 	github.com/tidwall/gjson v1.18.0
-	golang.org/x/oauth2 v0.34.0
+	golang.org/x/oauth2 v0.36.0
 )
 
 require (
