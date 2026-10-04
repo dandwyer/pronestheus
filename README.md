@@ -6,7 +6,7 @@ A Prometheus exporter for the [Nest Learning Thermostat](https://nest.com/). Exp
 
 Works with the new [Google Smart Device Management API](https://developers.google.com/nest/device-access)!
 
-![dashboard](docs/dashboard.png)
+![dashboard](https://raw.githubusercontent.com/dandwyer/pronestheus/refs/heads/main/docs/dashboard.png)
 
 ## Installation
 
