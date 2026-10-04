@@ -1,9 +1,10 @@
 # This Dockerfile is intended to be used with goreleaser.
 # It doesn't build the executable, it expects it to be already built by the goreleaser.
-# Base image is based on official node-exporter Dockerfile.
+# Base image is Google's distroless "static" image (actively maintained), which ships
+# CA certificates and timezone data needed for the Nest/OpenWeatherMap HTTPS calls.
+# The "nonroot" variant runs as UID 65532 by default.
 
-FROM quay.io/prometheus/busybox:glibc
+FROM gcr.io/distroless/static-debian13:nonroot
 COPY pronestheus /
-USER nobody
 EXPOSE 9777
 ENTRYPOINT ["/pronestheus"]

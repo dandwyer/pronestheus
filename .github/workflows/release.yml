@@ -48,7 +48,9 @@ jobs:
           go mod download
 
       - name: Build
-        run: go build -ldflags="-s -w" -o pronestheus ./cmd/pronestheus/main.go
+        # CGO_ENABLED=0 produces a static binary for the distroless base image.
+        # GOOS/GOARCH match the platform the image is built for.
+        run: CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags="-s -w" -o pronestheus ./cmd/pronestheus/main.go
 
       # https://github.com/wangyoucao577/go-release-action/blob/master/README.md
       - name: Build binaries for github release
