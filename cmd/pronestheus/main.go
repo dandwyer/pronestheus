@@ -56,7 +56,15 @@ func versionStr() string {
 		return "development"
 	}
 
-	return fmt.Sprintf("%s - revision %s built at %s", version, commit[:6], date)
+	revision := commit
+	if len(revision) > 6 {
+		revision = revision[:6]
+	}
+	if revision == "" {
+		revision = "unknown"
+	}
+
+	return fmt.Sprintf("%s - revision %s built at %s", version, revision, date)
 }
 
 func exitOnErr(err error) {

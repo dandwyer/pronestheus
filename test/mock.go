@@ -16,7 +16,7 @@ import (
 func WeatherServerMetric() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, readFile(filepath.Join("weather_metric.json")))
+		_, _ = fmt.Fprintln(w, readFile(filepath.Join("weather_metric.json")))
 	}))
 }
 
@@ -24,7 +24,7 @@ func WeatherServerMetric() *httptest.Server {
 func WeatherServerImperial() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, readFile(filepath.Join("weather_imperial.json")))
+		_, _ = fmt.Fprintln(w, readFile(filepath.Join("weather_imperial.json")))
 	}))
 }
 
@@ -32,7 +32,7 @@ func WeatherServerImperial() *httptest.Server {
 func WeatherServerMissingID() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, readFile(filepath.Join("weather_empty_id.json")))
+		_, _ = fmt.Fprintln(w, readFile(filepath.Join("weather_empty_id.json")))
 	}))
 }
 
@@ -40,7 +40,7 @@ func WeatherServerMissingID() *httptest.Server {
 func WeatherServerInvalidToken() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintln(w, readFile(filepath.Join("weather_invalid_token.json")))
+		_, _ = fmt.Fprintln(w, readFile(filepath.Join("weather_invalid_token.json")))
 	}))
 }
 
@@ -48,7 +48,7 @@ func WeatherServerInvalidToken() *httptest.Server {
 func WeatherServerInvalidResponse() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, readFile(filepath.Join("weather_invalid.json")))
+		_, _ = fmt.Fprintln(w, readFile(filepath.Join("weather_invalid.json")))
 	}))
 }
 
@@ -56,7 +56,7 @@ func WeatherServerInvalidResponse() *httptest.Server {
 func NestServer() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, readFile(filepath.Join("nest_valid.json")))
+		_, _ = fmt.Fprintln(w, readFile(filepath.Join("nest_valid.json")))
 	}))
 }
 
@@ -64,7 +64,7 @@ func NestServer() *httptest.Server {
 func NestServerInvalidToken() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintln(w, readFile(filepath.Join("nest_invalid_token.json")))
+		_, _ = fmt.Fprintln(w, readFile(filepath.Join("nest_invalid_token.json")))
 	}))
 }
 
@@ -72,7 +72,7 @@ func NestServerInvalidToken() *httptest.Server {
 func NestServerInvalidResponse() *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, readFile(filepath.Join("nest_invalid.json")))
+		_, _ = fmt.Fprintln(w, readFile(filepath.Join("nest_invalid.json")))
 	}))
 }
 

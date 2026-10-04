@@ -151,16 +151,16 @@ func (c *Collector) Collect(ch chan<- prometheus.Metric) {
 	thermostats, err := c.getNestReadings()
 	if err != nil {
 		ch <- prometheus.MustNewConstMetric(c.metrics.up, prometheus.GaugeValue, 0)
-		c.logger.Log("level", "error", "message", "Failed collecting Nest data", "stack", errors.WithStack(err))
+		_ = c.logger.Log("level", "error", "message", "Failed collecting Nest data", "stack", errors.WithStack(err))
 		return
 	}
 
-	c.logger.Log("level", "debug", "message", "Successfully collected Nest data")
+	_ = c.logger.Log("level", "debug", "message", "Successfully collected Nest data")
 
 	ch <- prometheus.MustNewConstMetric(c.metrics.up, prometheus.GaugeValue, 1)
 
 	for _, therm := range thermostats {
-		labels := []string{therm.ID, strings.Replace(therm.Label, " ", "-", -1)}
+		labels := []string{therm.ID, strings.ReplaceAll(therm.Label, " ", "-")}
 
 		ch <- prometheus.MustNewConstMetric(c.metrics.ambientTemp, prometheus.GaugeValue, therm.AmbientTemp, labels...)
 		ch <- prometheus.MustNewConstMetric(c.metrics.heatSetpointTemp, prometheus.GaugeValue, therm.HeatSetpointTemp, labels...)
@@ -185,7 +185,7 @@ func (c *Collector) getNestReadings() (thermostats []*Thermostat, err error) {
 		return nil, errors.Wrap(errNon200Response, fmt.Sprintf("code: %d", res.StatusCode))
 	}
 
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {

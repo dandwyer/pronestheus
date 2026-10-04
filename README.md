@@ -1,7 +1,6 @@
 # ProNestheus
 
 ![build](https://github.com/dandwyer/pronestheus/workflows/build/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/dandwyer/pronestheus)](https://goreportcard.com/report/github.com/dandwyer/pronestheus)
 
 A Prometheus exporter for the [Nest Learning Thermostat](https://nest.com/). Exposes metrics about your thermostats and the weather in your current location.
 

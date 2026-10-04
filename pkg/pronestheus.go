@@ -62,10 +62,10 @@ func NewExporter(cfg *ExporterConfig) (*Exporter, error) {
 
 // Run starts the exporter server and listens for incoming scraping requests.
 func (e *Exporter) Run() error {
-	e.logger.Log("level", "debug", "msg", "Started ProNestheus - Nest Thermostat Prometheus Exporter")
+	_ = e.logger.Log("level", "debug", "msg", "Started ProNestheus - Nest Thermostat Prometheus Exporter")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`<html>
+		_, _ = w.Write([]byte(`<html>
 			<head><title>ProNestheus</title></head>
 			<body>
 			<h1>ProNestheus - Nest Thermostat Prometheus Exporter</h1>

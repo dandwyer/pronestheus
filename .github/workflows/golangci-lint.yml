@@ -1,0 +1,35 @@
+# Borrowed from: https://github.com/golangci/golangci-lint-action#how-to-use
+name: golangci-lint
+on: [push, pull_request]
+
+permissions:
+  contents: read
+  # Optional: allow read access to pull requests. Use with `only-new-issues` option.
+  # pull-requests: read
+
+jobs:
+  golangci:
+    strategy:
+      matrix:
+        go: [stable]
+        os:
+            - macos-26-intel
+            - macos-latest
+            - ubuntu-24.04-arm
+            - ubuntu-26.04-arm
+            - ubuntu-latest
+            - windows-latest
+    name: lint
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version: ${{ matrix.go }}
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.14

@@ -13,6 +13,7 @@
 	deployments/docker-compose/files/dashboards/nest-thermostat-fahrenheit.json \
 	deployments/docker-compose/files/dashboards/nest-thermostat.json \
 	format \
+	golangci-lint \
 	lint \
 	log \
 	sanitize_dashboard \
@@ -53,7 +54,10 @@ format:
 	find . -iname \*.go -exec gofmt -s -w {} \;
 	go mod tidy
 
-lint:
+golangci-lint:
+	golangci-lint run ./...
+
+lint: golangci-lint
 	go install honnef.co/go/tools/cmd/staticcheck@latest
 	staticcheck ./...
 

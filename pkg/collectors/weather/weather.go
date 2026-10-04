@@ -119,11 +119,11 @@ func (c *Collector) Collect(ch chan<- prometheus.Metric) {
 	weather, err := c.getWeatherReadings()
 	if err != nil {
 		ch <- prometheus.MustNewConstMetric(c.metrics.up, prometheus.GaugeValue, 0)
-		c.logger.Log("level", "error", "message", "Failed collecting OpenWeatherMap data", "stack", errors.WithStack(err))
+		_ = c.logger.Log("level", "error", "message", "Failed collecting OpenWeatherMap data", "stack", errors.WithStack(err))
 		return
 	}
 
-	c.logger.Log("level", "debug", "message", "Successfully collected OpenWeatherMap data")
+	_ = c.logger.Log("level", "debug", "message", "Successfully collected OpenWeatherMap data")
 
 	ch <- prometheus.MustNewConstMetric(c.metrics.up, prometheus.GaugeValue, 1)
 	ch <- prometheus.MustNewConstMetric(c.metrics.temp, prometheus.GaugeValue, weather.Temperature)
@@ -137,7 +137,7 @@ func (c *Collector) getWeatherReadings() (weather *Weather, err error) {
 		return nil, errors.Wrap(errFailedRequest, err.Error())
 	}
 
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
