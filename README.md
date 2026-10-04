@@ -26,7 +26,18 @@ Helm chart is available in `deployments/helm`.
 
 ### "One-click" installation with Docker Compose
 
-Update necessary variables in `deployments/docker-compose/.env` file. Then run:
+Store your secrets as snake_case files in `~/.secrets/` (e.g. `pronestheus_nest_client_id`; see the `secrets:` section in `deployments/docker-compose/docker-compose.yml`).
+
+Set the permissions so the directory stays private but the files are readable by the container:
+
+```bash
+chmod 700 ~/.secrets
+chmod 644 ~/.secrets/pronestheus_*
+```
+
+The ProNestheus image runs as `nobody`, and Docker Compose mounts each `file:` secret with its host permissions (unlike `docker stack deploy`, which mounts secrets as world-readable `0444`). The `700` directory keeps other host users out; the `644` files let the container read them.
+
+Then run:
 ```
 cd deployments/docker-compose
 docker-compose up
@@ -136,3 +147,15 @@ nest_weather_temperature_celsius 17.57
 # TYPE nest_weather_up gauge
 nest_weather_up 1
 ```
+
+## Releasing
+
+To create a release:
+* Test locally
+* Push your latest code
+* Verify that all worflows succeed
+* Navigate to [Releases](https://github.com/dandwyer/pronestheus/releases) page and hit "Draft a new release" button
+* For Tag button, choose "Create a new tag" option and borrow semantic versioning convention from adjacent releases
+
+Note: the release workflow needs the `DOCKER_PASSWORD` secret and `DOCKER_USERNAME`
+repository variable to push to Docker Hub; `GITHUB_TOKEN` is provided automatically.

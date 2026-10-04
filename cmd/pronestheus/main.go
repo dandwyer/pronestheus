@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/alecthomas/kingpin/v2"
 	"github.com/dandwyer/pronestheus/pkg"
@@ -38,6 +39,11 @@ func main() {
 	kingpin.CommandLine.Name = "pronestheus"
 	kingpin.CommandLine.DefaultEnvars()
 
+	// Expose secrets referenced by *_FILE environment variables (e.g.
+	// PRONESTHEUS_NEST_CLIENT_ID_FILE) as regular environment variables so
+	// they are picked up by kingpin's DefaultEnvars().
+	loadSecretFiles()
+
 	// TODO: add validators for empty values
 
 	kingpin.Parse()
@@ -65,6 +71,38 @@ func versionStr() string {
 	}
 
 	return fmt.Sprintf("%s - revision %s built at %s", version, revision, date)
+}
+
+// loadSecretFiles implements the standard "*_FILE" secret convention used by
+// many Docker images: when an environment variable such as
+// PRONESTHEUS_NEST_CLIENT_ID_FILE points to a file, that file's contents are
+// used as the value of the corresponding PRONESTHEUS_NEST_CLIENT_ID variable.
+// This lets Compose mount secrets under /run/secrets and still have them
+// picked up by kingpin's DefaultEnvars().
+func loadSecretFiles() {
+	for _, kv := range os.Environ() {
+		name, _, _ := strings.Cut(kv, "=")
+		if !strings.HasSuffix(name, "_FILE") {
+			continue
+		}
+
+		base := strings.TrimSuffix(name, "_FILE")
+		path := os.Getenv(name)
+		if path == "" {
+			continue
+		}
+
+		value, err := os.ReadFile(path)
+		if err != nil {
+			continue
+		}
+
+		// Strip trailing newlines/CR so the value matches what was written
+		// to the secret file.
+		if err := os.Setenv(base, strings.TrimRight(string(value), "\r\n")); err != nil {
+			continue
+		}
+	}
 }
 
 func exitOnErr(err error) {

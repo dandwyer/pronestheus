@@ -30,8 +30,34 @@ services:
     image: dandw/pronestheus:latest
     ports:
       - "9777:9777"
-    env_file:
-      - .env
+    environment:
+      - PRONESTHEUS_NEST_CLIENT_ID_FILE=/run/secrets/pronestheus_nest_client_id
+      - PRONESTHEUS_NEST_CLIENT_SECRET_FILE=/run/secrets/pronestheus_nest_client_secret
+      - PRONESTHEUS_NEST_PROJECT_ID_FILE=/run/secrets/pronestheus_nest_project_id
+      - PRONESTHEUS_NEST_REFRESH_TOKEN_FILE=/run/secrets/pronestheus_nest_refresh_token
+      - PRONESTHEUS_OWM_AUTH_FILE=/run/secrets/pronestheus_owm_auth
+      - PRONESTHEUS_OWM_LOCATION_FILE=/run/secrets/pronestheus_owm_location
+    secrets:
+      - pronestheus_nest_client_id
+      - pronestheus_nest_client_secret
+      - pronestheus_nest_project_id
+      - pronestheus_nest_refresh_token
+      - pronestheus_owm_auth
+      - pronestheus_owm_location
+
+secrets:
+  pronestheus_nest_client_id:
+    file: ${HOME}/.secrets/pronestheus_nest_client_id
+  pronestheus_nest_client_secret:
+    file: ${HOME}/.secrets/pronestheus_nest_client_secret
+  pronestheus_nest_project_id:
+    file: ${HOME}/.secrets/pronestheus_nest_project_id
+  pronestheus_nest_refresh_token:
+    file: ${HOME}/.secrets/pronestheus_nest_refresh_token
+  pronestheus_owm_auth:
+    file: ${HOME}/.secrets/pronestheus_owm_auth
+  pronestheus_owm_location:
+    file: ${HOME}/.secrets/pronestheus_owm_location
 
 volumes:
   prometheus-data-volume:

@@ -68,12 +68,12 @@ test: test_auth
 	CGO_ENABLED=0 GOOS=linux go test ./... -v
 
 test_auth:
-	@ . deployments/docker-compose/.env; echo $${PRONESTHEUS_NEST_CLIENT_ID:?Needs to be set} STDOUT>/dev/null
-	@ . deployments/docker-compose/.env; echo $${PRONESTHEUS_NEST_CLIENT_SECRET:?Needs to be set} STDOUT>/dev/null
-	@ . deployments/docker-compose/.env; echo $${PRONESTHEUS_NEST_PROJECT_ID:?Needs to be set} STDOUT>/dev/null
-	@ . deployments/docker-compose/.env; echo $${PRONESTHEUS_NEST_REFRESH_TOKEN:?Needs to be set} STDOUT>/dev/null
-	@ - . deployments/docker-compose/.env; echo $${PRONESTHEUS_OWM_AUTH:?Should be set} STDOUT>/dev/null
-	@ - . deployments/docker-compose/.env; echo $${PRONESTHEUS_OWM_LOCATION:?Should be set} STDOUT>/dev/null
+	@ for s in pronestheus_nest_client_id pronestheus_nest_client_secret pronestheus_nest_project_id pronestheus_nest_refresh_token; do \
+		test -s "$$HOME/.secrets/$$s" || { echo "Missing required secret: $$s" >&2; exit 1; }; \
+	done
+	@ for s in pronestheus_owm_auth pronestheus_owm_location; do \
+		test -s "$$HOME/.secrets/$$s" || echo "Warning: missing optional secret $$s" >&2; \
+	done
 	@ echo "All mandatory environment variables are set."
 
 # If you export dashboard JSON from Grafana, you need to sanitize it to get rid
