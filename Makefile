@@ -10,6 +10,8 @@
 	convert_dashboard_from_f_to_c \
 	deploy \
 	deploy_fahrenheit \
+	docker_login \
+	fix_volume_perms \
 	deployments/docker-compose/files/dashboards/nest-thermostat-fahrenheit.json \
 	deployments/docker-compose/files/dashboards/nest-thermostat.json \
 	format \
@@ -32,17 +34,44 @@ build:
 build_docker: build test
 	docker build -t dandw/pronestheus:latest .
 
-deploy:	undeploy clean build_docker sanitize_dashboard convert_dashboard_from_c_to_f test_auth
-	docker compose -f deployments/docker-compose/docker-compose.yml up -d
+docker_login: test_auth
+	docker login -u "$$(cat ~/.secrets/docker_username)" --password-stdin        < ~/.secrets/docker_pull_dhi_token
+	docker login -u "$$(cat ~/.secrets/docker_username)" --password-stdin dhi.io < ~/.secrets/docker_pull_dhi_token
 
-deploy_fahrenheit: undeploy clean build_docker sanitize_dashboard convert_dashboard_from_c_to_f test_auth
+deploy:	docker_login undeploy fix_volume_perms clean build_docker sanitize_dashboard convert_dashboard_from_c_to_f
+	docker compose -f deployments/docker-compose/docker-compose.yml up --pull always -d
+
+deploy_fahrenheit: docker_login undeploy fix_volume_perms clean build_docker sanitize_dashboard convert_dashboard_from_c_to_f
 	docker compose \
 		-f deployments/docker-compose/docker-compose.yml \
 		-f deployments/docker-compose/docker-compose-fahrenheit.yml \
-		up -d
+		up --pull always -d
 
 undeploy:
 	docker compose -f deployments/docker-compose/docker-compose.yml down
+
+# Docker Hardened Images (dhi.io/*) run as the non-root user 65532, but the
+# persisted volumes may have last been written by a different image user (the
+# upstream prom/prometheus image runs as nobody, 65534). When that happens the
+# DHI runtime image crash-loops on startup, e.g.:
+#     err="open /var/prometheus/queries.active: permission denied"
+#     msg="failed to initialize active query tracker"
+# Re-own the named volumes to the DHI runtime user before deploy. Absent
+# volumes are skipped: Docker seeds them from the image on first mount, so a
+# chown on an empty volume would not stick.
+nonroot_uid := 65532
+nonroot_gid := 65532
+
+fix_volume_perms:
+	@for v in docker-compose_prometheus-data-volume; do \
+		if docker volume inspect "$$v" >/dev/null 2>&1; then \
+			echo "fix_volume_perms: chown $$v -> $(nonroot_uid):$(nonroot_gid)"; \
+			docker run --rm -v "$$v:/mnt" alpine:latest \
+				chown -R $(nonroot_uid):$(nonroot_gid) /mnt; \
+		else \
+			echo "fix_volume_perms: $$v absent, skipping"; \
+		fi; \
+	done
 
 upgrade_go_dependencies:
 	go get -u ./...
@@ -68,7 +97,12 @@ test: test_auth
 	CGO_ENABLED=0 GOOS=linux go test ./... -v
 
 test_auth:
-	@ for s in pronestheus_nest_client_id pronestheus_nest_client_secret pronestheus_nest_project_id pronestheus_nest_refresh_token; do \
+	@ for s in pronestheus_nest_client_id \
+		pronestheus_nest_client_secret \
+		pronestheus_nest_project_id \
+		pronestheus_nest_refresh_token \
+		docker_username \
+		docker_pull_dhi_token; do \
 		test -s "$$HOME/.secrets/$$s" || { echo "Missing required secret: $$s" >&2; exit 1; }; \
 	done
 	@ for s in pronestheus_owm_auth pronestheus_owm_location; do \

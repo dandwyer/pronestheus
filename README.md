@@ -37,6 +37,13 @@ chmod 644 ~/.secrets/pronestheus_*
 
 The ProNestheus image runs as `nobody`, and Docker Compose mounts each `file:` secret with its host permissions (unlike `docker stack deploy`, which mounts secrets as world-readable `0444`). The `700` directory keeps other host users out; the `644` files let the container read them.
 
+To confirm that all authentication prerequisites are in place before deploying, run:
+```bash
+make test_auth
+```
+This verifies every mandatory secret (Nest credentials and Docker registry
+credentials) and warns about any missing optional ones.
+
 Then run:
 ```
 cd deployments/docker-compose

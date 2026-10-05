@@ -1,16 +1,16 @@
 services:
   prometheus:
-    # https://hub.docker.com/r/prom/prometheus/tags
-    image: prom/prometheus:v3
+    # https://dhi.io/catalog/prometheus
+    image: dhi.io/prometheus:3.15
     ports:
       - "9090:9090"
     volumes:
       - ./files/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus-data-volume:/prometheus
+      - prometheus-data-volume:/var/prometheus
 
   grafana:
-    # https://hub.docker.com/r/grafana/grafana/tags
-    image: grafana/grafana:13.0
+    # https://dhi.io/catalog/grafana
+    image: dhi.io/grafana:13
     ports:
       - "3000:3000"
     volumes:
