@@ -30,10 +30,6 @@ Each credential can also be supplied from a file by appending `_FILE` to the
 variable name. For example:
 `-e PRONESTHEUS_NEST_CLIENT_ID_FILE=/run/secrets/pronestheus_nest_client_id`.
 
-### Helm chart
-
-Helm chart is available in `deployments/helm`.
-
 ### "One-click" installation with Docker Compose
 
 Store your secrets as snake_case files in `~/.secrets/` (e.g.
