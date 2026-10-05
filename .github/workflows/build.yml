@@ -1,6 +1,10 @@
 name: build
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  # Run manually from the Actions tab to validate DHI auth before a release.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -29,10 +33,60 @@ jobs:
           go-version: ${{ matrix.go }}
 
       - name: Build
-        # CGO_ENABLED=0 produces a static binary for the distroless base image.
+        # CGO_ENABLED=0 produces a static binary for the DHI static base image.
         # GOOS/GOARCH cross-compile for each target platform.
         run: go build -ldflags="-s -w" -o pronestheus ./cmd/pronestheus/main.go
 
       - name: Test
         # Tests must execute natively, so only run them on the host arch (amd64).
         run: go test ./... -v
+
+  container:
+    name: Build Container Image
+    runs-on: ubuntu-latest
+    # Fork pull requests don't receive repository secrets, so skip the build
+    # (which needs DOCKER_PASSWORD to authenticate to dhi.io) for them.
+    if: >-
+      github.actor != 'dependabot[bot]' && (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version: stable
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build binary for Docker image
+        # CGO_ENABLED=0 produces a static binary for the DHI static base image.
+        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o pronestheus ./cmd/pronestheus/main.go
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Log in to Docker Hardened Images (dhi.io)
+        # Exercises the same DHI auth the release workflow relies on, so a
+        # missing/expired credential fails here instead of at release time.
+        uses: docker/login-action@v4
+        with:
+          registry: dhi.io
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build container image
+        # Pulling the dhi.io/static base here proves the registry login worked.
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          load: true
+          platforms: linux/amd64
+          tags: pronestheus:ci

@@ -68,12 +68,21 @@ jobs:
 
       - name: Build binary for Docker image
         # Produces the binary the Dockerfile COPYs into the image.
-        # CGO_ENABLED=0 produces a static binary for the distroless base image.
+        # CGO_ENABLED=0 produces a static binary for the DHI static base image.
         run: CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags="-s -w" -o pronestheus ./cmd/pronestheus/main.go
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v4
         with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Log in to Docker Hardened Images (dhi.io)
+        # Required to pull the dhi.io/static base image referenced by the Dockerfile.
+        # secrets.DOCKER_PASSWORD must be a Docker PAT entitled to the DHI images.
+        uses: docker/login-action@v4
+        with:
+          registry: dhi.io
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
