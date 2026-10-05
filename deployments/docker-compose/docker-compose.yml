@@ -2,8 +2,15 @@ services:
   prometheus:
     # https://dhi.io/catalog/prometheus
     image: dhi.io/prometheus:3.15
-    ports:
-      - "9090:9090"
+    # No host port: reached through nginx on the Compose network.
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/var/prometheus
+      # Serve the UI under /prometheus/ so nginx can front every service on a
+      # single published port. This also moves the metrics endpoint to
+      # /prometheus/metrics, which is why files/prometheus.yml sets metrics_path.
+      - --web.external-url=http://localhost:${PRONESTHEUS_WEB_PORT:-80}/prometheus/
+      - --web.route-prefix=/prometheus/
     volumes:
       - ./files/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data-volume:/var/prometheus
@@ -11,14 +18,17 @@ services:
   grafana:
     # https://dhi.io/catalog/grafana
     image: dhi.io/grafana:13
-    ports:
-      - "3000:3000"
+    # No host port: reached through nginx on the Compose network.
     volumes:
       - ./files/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
       - ./files/grafana-providers.yml:/etc/grafana/provisioning/dashboards/providers.yml
       - ./files/dashboards/nest-thermostat.json:/var/lib/grafana/dashboards/pronestheus/nest-thermostat.json
       - ./files/dashboards/nest-thermostat-fahrenheit.json:/var/lib/grafana/dashboards/pronestheus/nest-thermostat-fahrenheit.json
     environment:
+      # Served under /grafana/ by nginx. If you reach Grafana through a hostname
+      # other than localhost, update this URL so generated links stay correct.
+      - GF_SERVER_ROOT_URL=http://localhost:${PRONESTHEUS_WEB_PORT:-80}/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
       - GF_AUTH_ANONYMOUS_ENABLED=true
       # - GF_AUTH_ANONYMOUS_HIDE_VERSION=true
       # - GF_AUTH_ANONYMOUS_ORG_NAME=Main Org.
@@ -28,8 +38,7 @@ services:
   pronestheus:
     # https://hub.docker.com/r/dandw/pronestheus/tags
     image: dandw/pronestheus:latest
-    ports:
-      - "9777:9777"
+    # No host port: reached through nginx on the Compose network.
     environment:
       - PRONESTHEUS_NEST_CLIENT_ID_FILE=/run/secrets/pronestheus_nest_client_id
       - PRONESTHEUS_NEST_CLIENT_SECRET_FILE=/run/secrets/pronestheus_nest_client_secret
@@ -44,6 +53,25 @@ services:
       - pronestheus_nest_refresh_token
       - pronestheus_owm_auth
       - pronestheus_owm_location
+
+  nginx:
+    # https://dhi.io/catalog/nginx
+    image: dhi.io/nginx:1
+    # The one published port for the whole stack. Override the host port with
+    # PRONESTHEUS_WEB_PORT; defaults to 80.
+    ports:
+      - "${PRONESTHEUS_WEB_PORT:-80}:80"
+    # DHI nginx runs as nonroot (65532) but listens on 80; this lets it bind an
+    # unprivileged port without CAP_NET_BIND_SERVICE.
+    sysctls:
+      net.ipv4.ip_unprivileged_port_start: 0
+    volumes:
+      - ./files/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./files/index.html:/usr/share/nginx/html/index.html:ro
+    depends_on:
+      - grafana
+      - prometheus
+      - pronestheus
 
 secrets:
   pronestheus_nest_client_id:

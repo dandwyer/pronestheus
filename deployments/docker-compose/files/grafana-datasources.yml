@@ -5,5 +5,7 @@ datasources:
   - name: Prometheus
     type: prometheus
     access: proxy
-    url: http://prometheus:9090
+    # Prometheus runs with --web.route-prefix=/prometheus/, so its API lives
+    # under that prefix as well.
+    url: http://prometheus:9090/prometheus/
     isDefault: true

@@ -3,6 +3,9 @@ global:
 
 scrape_configs:
   - job_name: prometheus
+    # Prometheus serves from /prometheus/ (--web.route-prefix), which also moves
+    # its own metrics endpoint to /prometheus/metrics.
+    metrics_path: /prometheus/metrics
     static_configs:
       - targets: ['localhost:9090']
 

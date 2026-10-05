@@ -2,11 +2,19 @@
 
 ![build](https://github.com/dandwyer/pronestheus/workflows/build/badge.svg)
 
-A Prometheus exporter for the [Nest Learning Thermostat](https://nest.com/). Exposes metrics about your thermostats and the weather in your current location.
+![ProNestheus landing page](https://raw.githubusercontent.com/dandwyer/pronestheus/refs/heads/main/docs/pronestheus.png)
 
-Works with the new [Google Smart Device Management API](https://developers.google.com/nest/device-access)!
+Turn your [Nest Learning Thermostat](https://nest.com/) into Prometheus metrics
+and Grafana dashboards. ProNestheus exports the inside and outside temperature,
+humidity, heat/cool and eco setpoints, system status, fan mode and current
+weather for every thermostat in your home.
 
-![dashboard](https://raw.githubusercontent.com/dandwyer/pronestheus/refs/heads/main/docs/dashboard.png)
+It's a single static Go binary (or container) built on Google's
+[Smart Device Management API](https://developers.google.com/nest/device-access).
+Bring your own Prometheus and Grafana, or use the bundled one-command Docker
+Compose stack that wires all three together behind a single port.
+
+![Grafana dashboard](https://raw.githubusercontent.com/dandwyer/pronestheus/refs/heads/main/docs/dashboard.png)
 
 ## Installation
 
@@ -71,7 +79,22 @@ make deploy
 make deploy_fahrenheit
 ```
 
-This will start docker containers with Prometheus, Grafana and ProNestheus exporter automatically configured. Visit http://localhost:3000 to open Grafana dashboard with your thermostat metrics.
+This starts Prometheus, Grafana and the ProNestheus exporter, all fronted by nginx
+on a single published port. The port defaults to `80` and can be changed with
+the `PRONESTHEUS_WEB_PORT` environment variable:
+```bash
+PRONESTHEUS_WEB_PORT=9000 make deploy
+```
+
+| URL | Service |
+| --- | --- |
+| http://localhost/ | landing page linking to everything below |
+| http://localhost/grafana/ | Grafana dashboards |
+| http://localhost/prometheus/ | Prometheus UI |
+| http://localhost/pronestheus | ProNestheus exporter metrics |
+
+(The URLs above assume the default port `80`; substitute `PRONESTHEUS_WEB_PORT` if
+you changed it.) This iteration serves plain HTTP only; there is no TLS yet.
 
 ### Usage and configuration
 
