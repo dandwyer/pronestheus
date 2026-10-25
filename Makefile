@@ -10,6 +10,8 @@
 	convert_dashboard_from_f_to_c \
 	deploy \
 	deploy_fahrenheit \
+	deploy_fahrenheit_local \
+	deploy_local \
 	docker_login \
 	fix_volume_perms \
 	deployments/docker-compose/files/dashboards/nest-thermostat-fahrenheit.json \
@@ -34,21 +36,38 @@ build:
 build_docker: build test
 	docker build -t dandw/pronestheus:latest .
 
+compose_files := -f deployments/docker-compose/docker-compose.yml
+compose_files_fahrenheit := $(compose_files) -f deployments/docker-compose/docker-compose-fahrenheit.yml
+
+# Shared by every deploy target: repair the Prometheus volume ownership for the
+# non-root DHI image, and regenerate the dashboards that Compose bind-mounts into
+# Grafana. No teardown prerequisite: `docker compose up` recreates only the
+# containers whose image or configuration changed. Run `make undeploy` to stop
+# the stack explicitly.
+deploy_prereqs := fix_volume_perms sanitize_dashboard convert_dashboard_from_c_to_f
+
 docker_login: test_auth
 	docker login -u "$$(cat ~/.secrets/docker_username)" --password-stdin        < ~/.secrets/docker_pull_dhi_token
 	docker login -u "$$(cat ~/.secrets/docker_username)" --password-stdin dhi.io < ~/.secrets/docker_pull_dhi_token
 
-deploy:	docker_login undeploy fix_volume_perms clean build_docker sanitize_dashboard convert_dashboard_from_c_to_f
-	docker compose -f deployments/docker-compose/docker-compose.yml up --pull always -d
+deploy: docker_login test $(deploy_prereqs)
+	docker compose $(compose_files) up --pull always -d
 
-deploy_fahrenheit: docker_login undeploy fix_volume_perms clean build_docker sanitize_dashboard convert_dashboard_from_c_to_f
-	docker compose \
-		-f deployments/docker-compose/docker-compose.yml \
-		-f deployments/docker-compose/docker-compose-fahrenheit.yml \
-		up --pull always -d
+deploy_fahrenheit: docker_login test $(deploy_prereqs)
+	docker compose $(compose_files_fahrenheit) up --pull always -d
+
+# Local deploys build dandw/pronestheus:latest from the working tree and run that
+# image. `--pull missing` leaves the freshly built image in place; the published
+# targets above use `--pull always`, which overwrites the tag with Docker Hub's
+# copy.
+deploy_local: docker_login build_docker $(deploy_prereqs)
+	docker compose $(compose_files) up --pull missing -d
+
+deploy_fahrenheit_local: docker_login build_docker $(deploy_prereqs)
+	docker compose $(compose_files_fahrenheit) up --pull missing -d
 
 undeploy:
-	docker compose -f deployments/docker-compose/docker-compose.yml down
+	docker compose $(compose_files_fahrenheit) down
 
 # Docker Hardened Images (dhi.io/*) run as the non-root user 65532, but the
 # persisted volumes may have last been written by a different image user (the

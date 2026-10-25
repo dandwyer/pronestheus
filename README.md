@@ -43,9 +43,9 @@ variable name. For example:
 Store your secrets as snake_case files in `~/.secrets/` (e.g.
 `pronestheus_nest_client_id`; see the `secrets:` section in
 `deployments/docker-compose/docker-compose.yml`). You also need Docker registry
-credentials, `docker_username` and `docker_pull_dhi_token`, so `make deploy` can
-authenticate to [Docker Hardened Images](https://dhi.io/) before pulling its base
-images.
+credentials, `docker_username` and `docker_pull_dhi_token`, so the deploy targets
+can authenticate to [Docker Hardened Images](https://dhi.io/) before pulling
+their images.
 
 Set the permissions so the directory stays private but the files are readable by
 the container (the Docker credential files are only read on the host, so they can
@@ -78,6 +78,23 @@ or, from the repository root, use the Make targets for Celsius and Fahrenheit su
 make deploy
 make deploy_fahrenheit
 ```
+
+These deploy the published `dandw/pronestheus:latest` image from Docker Hub
+(`up --pull always`). To deploy a container built from your working tree
+instead, use the `_local` variants:
+```
+make deploy_local
+make deploy_fahrenheit_local
+```
+
+The local variants build `dandw/pronestheus:latest` from the working tree and
+start the stack with `--pull missing`, so Compose keeps the freshly built image
+instead of replacing it with the registry copy.
+
+All deploy targets reconcile the running stack in place: `docker compose up`
+recreates only the containers whose image or configuration changed, so
+unaffected services keep running. Use `make undeploy` to stop the stack
+explicitly.
 
 This starts Prometheus, Grafana and the ProNestheus exporter, all fronted by nginx
 on a single published port. The port defaults to `80` and can be changed with
