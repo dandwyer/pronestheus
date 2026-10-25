@@ -207,3 +207,12 @@ Note: the release workflow needs the `DOCKER_PASSWORD` secret and `DOCKER_USERNA
 repository variable to push to Docker Hub and to authenticate to Docker Hardened
 Images (`dhi.io`, used for the base image); the `DOCKER_PASSWORD` PAT must be
 entitled to pull DHI images. `GITHUB_TOKEN` is provided automatically.
+
+## License
+
+Released under the [MIT License](LICENSE.md).
+
+ProNestheus is a fork of
+[maxpower47/pronestheus](https://github.com/maxpower47/pronestheus), which is
+itself a fork of [grdl/pronestheus](https://github.com/grdl/pronestheus) by
+Grzegorz Dlugoszewski. Upstream copyright notices are retained in the license.
