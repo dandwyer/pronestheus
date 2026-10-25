@@ -165,3 +165,6 @@ deployments/docker-compose/files/dashboards/nest-thermostat.json:
 
 clean:
 	- rm $(shell pwd)/pronestheus
+
+cliff:
+	git-cliff --verbose --unreleased --bump -o
