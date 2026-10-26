@@ -1,6 +1,6 @@
 module github.com/dandwyer/pronestheus
 
-go 1.26.0
+go 1.27.3
 
 require (
 	github.com/alecthomas/assert/v2 v2.11.0
